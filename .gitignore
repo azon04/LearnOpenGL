@@ -1,0 +1,8 @@
+*.VC.db
+includes/
+glfw/
+glew-2.0.0/
+soil/
+LearnOpenGL/Debug
+Debug/
+.vs/
