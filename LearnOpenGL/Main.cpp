@@ -493,47 +493,48 @@ int main() {
 
 	// 3D cube
 	GLfloat cube_vertices[] = {
-		-0.5f, -0.5f, -0.5f,	0.0f, 0.0f, -1.0f,
-		0.5f, -0.5f, -0.5f,		0.0f, 0.0f, -1.0f,
-		0.5f,  0.5f, -0.5f,		0.0f, 0.0f, -1.0f,
-		0.5f,  0.5f, -0.5f,		0.0f, 0.0f, -1.0f,
-		-0.5f,  0.5f, -0.5f,	0.0f, 0.0f, -1.0f,
-		-0.5f, -0.5f, -0.5f,	0.0f, 0.0f, -1.0f,
+		// positions			// normals				// texture coords
+		-0.5f, -0.5f, -0.5f,	0.0f, 0.0f, -1.0f,		0.0f, 0.0f,
+		0.5f, -0.5f, -0.5f,		0.0f, 0.0f, -1.0f,		1.0f, 0.0f,
+		0.5f,  0.5f, -0.5f,		0.0f, 0.0f, -1.0f,		1.0f, 1.0f,
+		0.5f,  0.5f, -0.5f,		0.0f, 0.0f, -1.0f,		1.0f, 1.0f,
+		-0.5f,  0.5f, -0.5f,	0.0f, 0.0f, -1.0f,		0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,	0.0f, 0.0f, -1.0f,		0.0f, 0.0f,
 
-		-0.5f, -0.5f,  0.5f,	0.0f, 0.0f, 1.0f,
-		0.5f, -0.5f,  0.5f,		0.0f, 0.0f, 1.0f,
-		0.5f,  0.5f,  0.5f,		0.0f, 0.0f, 1.0f,
-		0.5f,  0.5f,  0.5f,		0.0f, 0.0f, 1.0f,
-		-0.5f,  0.5f,  0.5f,	0.0f, 0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f,	0.0f, 0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,	0.0f, 0.0f, 1.0f,		0.0f, 0.0f,
+		0.5f, -0.5f,  0.5f,		0.0f, 0.0f, 1.0f,		1.0f, 0.0f,
+		0.5f,  0.5f,  0.5f,		0.0f, 0.0f, 1.0f,		1.0f, 1.0f,
+		0.5f,  0.5f,  0.5f,		0.0f, 0.0f, 1.0f,		1.0f, 1.0f,
+		-0.5f,  0.5f,  0.5f,	0.0f, 0.0f, 1.0f,		0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,	0.0f, 0.0f, 1.0f,		0.0f, 0.0f,
 
-		-0.5f,  0.5f,  0.5f,	-1.0f, 0.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f,	-1.0f, 0.0f, 0.0f,
-		-0.5f, -0.5f, -0.5f,	-1.0f, 0.0f, 0.0f,
-		-0.5f, -0.5f, -0.5f,	-1.0f, 0.0f, 0.0f,
-		-0.5f, -0.5f,  0.5f,	-1.0f, 0.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f,	-1.0f, 0.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,	-1.0f,  0.0f,  0.0f,	1.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,	-1.0f,  0.0f,  0.0f,	1.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,	-1.0f,  0.0f,  0.0f,	0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,	-1.0f,  0.0f,  0.0f,	0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,	-1.0f,  0.0f,  0.0f,	0.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,	-1.0f,  0.0f,  0.0f,	1.0f, 0.0f,
 
-		0.5f,  0.5f,  0.5f,		1.0f, 0.0f, 0.0f,
-		0.5f,  0.5f, -0.5f,		1.0f, 0.0f, 0.0f,
-		0.5f, -0.5f, -0.5f,		1.0f, 0.0f, 0.0f,
-		0.5f, -0.5f, -0.5f,		1.0f, 0.0f, 0.0f,
-		0.5f, -0.5f,  0.5f,		1.0f, 0.0f, 0.0f,
-		0.5f,  0.5f,  0.5f,		1.0f, 0.0f, 0.0f,
+		0.5f,  0.5f,  0.5f,		1.0f,  0.0f,  0.0f,		1.0f, 0.0f,
+		0.5f,  0.5f, -0.5f,		1.0f,  0.0f,  0.0f,		1.0f, 1.0f,
+		0.5f, -0.5f, -0.5f,		1.0f,  0.0f,  0.0f,		0.0f, 1.0f,
+		0.5f, -0.5f, -0.5f,		1.0f,  0.0f,  0.0f,		0.0f, 1.0f,
+		0.5f, -0.5f,  0.5f,		1.0f,  0.0f,  0.0f,		0.0f, 0.0f,
+		0.5f,  0.5f,  0.5f,		1.0f,  0.0f,  0.0f,		1.0f, 0.0f,
 
-		-0.5f, -0.5f, -0.5f,	0.0f, -1.0f, 0.0f,
-		0.5f, -0.5f, -0.5f,		0.0f, -1.0f, 0.0f,
-		0.5f, -0.5f,  0.5f,		0.0f, -1.0f, 0.0f,
-		0.5f, -0.5f,  0.5f,		0.0f, -1.0f, 0.0f,
-		-0.5f, -0.5f,  0.5f,	0.0f, -1.0f, 0.0f,
-		-0.5f, -0.5f, -0.5f,	0.0f, -1.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f,	0.0f, -1.0f,  0.0f,		0.0f, 1.0f,
+		0.5f, -0.5f, -0.5f,		0.0f, -1.0f,  0.0f,		1.0f, 1.0f,
+		0.5f, -0.5f,  0.5f,		0.0f, -1.0f,  0.0f,		1.0f, 0.0f,
+		0.5f, -0.5f,  0.5f,		0.0f, -1.0f,  0.0f,		1.0f, 0.0f,
+		-0.5f, -0.5f,  0.5f,	0.0f, -1.0f,  0.0f,		0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f,	0.0f, -1.0f,  0.0f,		0.0f, 1.0f,
 
-		-0.5f,  0.5f, -0.5f,	0.0f, 1.0f, 0.0f,
-		0.5f,  0.5f, -0.5f,		0.0f, 1.0f, 0.0f,
-		0.5f,  0.5f,  0.5f,		0.0f, 1.0f, 0.0f,
-		0.5f,  0.5f,  0.5f,		0.0f, 1.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f,	0.0f, 1.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f,	0.0f, 1.0f, 0.0f
+		-0.5f,  0.5f, -0.5f,	0.0f,  1.0f,  0.0f,		0.0f, 1.0f,
+		0.5f,  0.5f, -0.5f,		0.0f,  1.0f,  0.0f,		1.0f, 1.0f,
+		0.5f,  0.5f,  0.5f,		0.0f,  1.0f,  0.0f,		1.0f, 0.0f,
+		0.5f,  0.5f,  0.5f,		0.0f,  1.0f,  0.0f,		1.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,	0.0f,  1.0f,  0.0f,		0.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,	0.0f,  1.0f,  0.0f,		0.0f, 1.0f
 	};
 
 	GLuint VBO;
@@ -547,14 +548,46 @@ int main() {
 	glBufferData(GL_ARRAY_BUFFER, sizeof(cube_vertices), cube_vertices, GL_STATIC_DRAW);
 
 	// Position Attributes
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);
 	glEnableVertexAttribArray(0);
 
 	// Normal Attributes
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
 	glEnableVertexAttribArray(1);
 
+	// TexCoord attributes
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(2);
+
 	glBindVertexArray(0);
+
+
+	// setting up Texture
+	int t_width, t_height;
+	unsigned char* image = SOIL_load_image("container2.png", &t_width, &t_height, 0, SOIL_LOAD_RGB);
+
+	GLuint diffuseMap;
+	
+	glGenTextures(1, &diffuseMap);
+
+	glBindTexture(GL_TEXTURE_2D, diffuseMap);
+	// Set Texture Parameters
+	// Set Wrap function
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+	// Set Filtering function
+	// Set Mipmaping functions
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, t_width, t_height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+	
+	glGenerateMipmap(GL_TEXTURE_2D);
+	
+	SOIL_free_image_data(image);
+
+	std::cout << t_width << "," << t_height << std::endl;
+	
+	glBindTexture(GL_TEXTURE_2D, 0);
 
 	// Setup light VAO
 	GLuint lightVAO;
@@ -564,7 +597,7 @@ int main() {
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
 	// Position attributes
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);
 	glEnableVertexAttribArray(0);
 	glBindVertexArray(0);
 
@@ -580,7 +613,11 @@ int main() {
 	Light light(lightPos, glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(1.0f, 1.0f, 1.0f));
 
 	// Material
+#if USING_DIFFUSE_MAP
+	Material mat(diffuseMap, glm::vec3(0.5f, 0.5f, 0.5f), 32.0f);
+#else
 	Material mat(glm::vec3(1.0f, 0.5f, 0.31f), glm::vec3(1.0f, 0.5f, 0.31f), glm::vec3(0.5f, 0.5f, 0.5f), 32.0f);
+#endif
 
 	// set mouse callbacks
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -621,13 +658,22 @@ int main() {
 		glUniform3f(viewPosLoc, camera.Position.x, camera.Position.y, camera.Position.z);
 
 		// Setting up Material
+#if USING_DIFFUSE_MAP
+		GLint diffuseMapLoc = _3dShader->getUniformPosition("material.diffuse");
+		glUniform1i(diffuseMapLoc, 0);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, diffuseMap);
+#else
 		GLint matAmbientLoc = _3dShader->getUniformPosition("material.ambient");
 		GLint matDiffuseLoc = _3dShader->getUniformPosition("material.diffuse");
+		glUniform3f(matAmbientLoc, mat.Ambient.r, mat.Ambient.g, mat.Ambient.b);
+		glUniform3f(matDiffuseLoc, mat.Diffuse.r, mat.Diffuse.g, mat.Diffuse.b);
+#endif	
+
 		GLint matSpecularLoc = _3dShader->getUniformPosition("material.specular");
 		GLint matShineLoc = _3dShader->getUniformPosition("material.shininess");
 
-		glUniform3f(matAmbientLoc, mat.Ambient.r, mat.Ambient.g, mat.Ambient.b);
-		glUniform3f(matDiffuseLoc, mat.Diffuse.r, mat.Diffuse.g, mat.Diffuse.b);
 		glUniform3f(matSpecularLoc, mat.Specular.r, mat.Specular.g, mat.Specular.b);
 		glUniform1f(matShineLoc, mat.Shininess);
 
@@ -660,6 +706,9 @@ int main() {
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		glBindVertexArray(0);
 		
+#if USING_DIFFUSE_MAP
+		glBindTexture(GL_TEXTURE_2D, 0);
+#endif
 		// Drawing Light
 		Shader* lightShader = ShaderManager::getInstance()->getShaderByType(SHADER_TYPE_VERTICE_LIGHT_REP);
 		lightShader->Use();
