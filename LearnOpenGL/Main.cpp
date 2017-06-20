@@ -563,6 +563,8 @@ int main() {
 
 
 	// setting up Texture
+
+	// Setting up Diffuse Map
 	int t_width, t_height;
 	unsigned char* image = SOIL_load_image("container2.png", &t_width, &t_height, 0, SOIL_LOAD_RGB);
 
@@ -585,7 +587,29 @@ int main() {
 	
 	SOIL_free_image_data(image);
 
-	std::cout << t_width << "," << t_height << std::endl;
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	// Setting up Specular map
+	int s_width, s_height;
+	unsigned char* specular_image = SOIL_load_image("container2_specular.png", &s_width, &s_height, 0, SOIL_LOAD_RGB);
+
+	GLuint specularMap;
+	
+	glGenTextures(1, &specularMap);
+	glBindTexture(GL_TEXTURE_2D, specularMap);
+	// Set Texture Parameters
+	// Set Wrap Function
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+	// Set Filtering function
+	// set Mipmaping function
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, s_width, s_height, 0, GL_RGB, GL_UNSIGNED_BYTE, specular_image);
+	
+	glGenerateMipmap(GL_TEXTURE_2D);
+
+	SOIL_free_image_data(specular_image);
 	
 	glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -614,7 +638,7 @@ int main() {
 
 	// Material
 #if USING_DIFFUSE_MAP
-	Material mat(diffuseMap, glm::vec3(0.5f, 0.5f, 0.5f), 32.0f);
+	Material mat(diffuseMap, specularMap, 32.0F);
 #else
 	Material mat(glm::vec3(1.0f, 0.5f, 0.31f), glm::vec3(1.0f, 0.5f, 0.31f), glm::vec3(0.5f, 0.5f, 0.5f), 32.0f);
 #endif
@@ -664,18 +688,24 @@ int main() {
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, diffuseMap);
+
+		GLint specularMapLoc = _3dShader->getUniformPosition("material.specular");
+		glUniform1i(specularMapLoc, 1);
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, specularMap);
 #else
 		GLint matAmbientLoc = _3dShader->getUniformPosition("material.ambient");
 		GLint matDiffuseLoc = _3dShader->getUniformPosition("material.diffuse");
+		GLint matSpecularLoc = _3dShader->getUniformPosition("material.specular");
 		glUniform3f(matAmbientLoc, mat.Ambient.r, mat.Ambient.g, mat.Ambient.b);
 		glUniform3f(matDiffuseLoc, mat.Diffuse.r, mat.Diffuse.g, mat.Diffuse.b);
-#endif	
-
-		GLint matSpecularLoc = _3dShader->getUniformPosition("material.specular");
-		GLint matShineLoc = _3dShader->getUniformPosition("material.shininess");
-
 		glUniform3f(matSpecularLoc, mat.Specular.r, mat.Specular.g, mat.Specular.b);
+		
+#endif
+		GLint matShineLoc = _3dShader->getUniformPosition("material.shininess");
 		glUniform1f(matShineLoc, mat.Shininess);
+		
 
 		// Setting up Light
 		GLint lightAmbientLoc = _3dShader->getUniformPosition("light.ambient");

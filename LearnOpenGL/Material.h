@@ -20,19 +20,20 @@ public:
 
 	glm::vec3 Diffuse;
 	glm::vec3 Ambient;
+	glm::vec3 Specular;
 #else
-	Material(GLuint diffuseMap, glm::vec3 specular, GLfloat shininess) :
+	Material(GLuint diffuseMap, GLuint specularMap, GLfloat shininess) :
 		diffuseMapIndex(diffuseMap),
-		Specular(specular),
+		specularMapIndex(specularMap),
 		Shininess(shininess)
 	{}
 
 	GLuint diffuseMapIndex;
+	GLuint specularMapIndex;
 #endif
 
 	Material() {}
 	
-	glm::vec3 Specular;
 	GLfloat Shininess;
 };
 
