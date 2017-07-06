@@ -13,6 +13,8 @@
 #include "Camera.h"
 #include "Material.h"
 #include "Light.h"
+#include "DirLight.h"
+#include "PointLight.h"
 
 #include "SOIL.h"
 
@@ -625,6 +627,19 @@ int main() {
 	glEnableVertexAttribArray(0);
 	glBindVertexArray(0);
 
+	glm::vec3 cubePositions[] = {
+		glm::vec3(0.0f,  0.0f,  0.0f),
+		glm::vec3(2.0f,  5.0f, -15.0f),
+		glm::vec3(-1.5f, -2.2f, -2.5f),
+		glm::vec3(-3.8f, -2.0f, -12.3f),
+		glm::vec3(2.4f, -0.4f, -3.5f),
+		glm::vec3(-1.7f,  3.0f, -7.5f),
+		glm::vec3(1.3f, -2.0f, -2.5f),
+		glm::vec3(1.5f,  2.0f, -2.5f),
+		glm::vec3(1.5f,  0.2f, -1.5f),
+		glm::vec3(-1.3f,  1.0f, -1.5f)
+	};
+
 	glm::mat4 trans;
 	trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
 	trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
@@ -634,8 +649,10 @@ int main() {
 
 	// light attributes
 	glm::vec3 lightPos(1.2f, 0.0f, 0.0f);
-	Light light(lightPos, glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(1.0f, 1.0f, 1.0f));
-
+	//Light light(lightPos, glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(1.0f, 1.0f, 1.0f));
+	//DirLight light(glm::vec3(-0.2f, -1.0f, 0.3f), glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(1.0f, 1.0f, 1.0f));
+	PointLight light(lightPos, glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 0.09f, 0.032f);
+	
 	// Material
 #if USING_DIFFUSE_MAP
 	Material mat(diffuseMap, specularMap, 32.0F);
@@ -712,14 +729,21 @@ int main() {
 		GLint lightDiffuseLoc = _3dShader->getUniformPosition("light.diffuse");
 		GLint lightSpecularLoc = _3dShader->getUniformPosition("light.specular");
 		GLint lightPositionLoc = _3dShader->getUniformPosition("light.position");
-
+		//GLint lightDirectionLoc = _3dShader->getUniformPosition("light.direction");
+		GLint lightConstantLoc = _3dShader->getUniformPosition("light.constant");
+		GLint lightLinearLoc = _3dShader->getUniformPosition("light.linear");
+		GLint lightQuadraticLoc = _3dShader->getUniformPosition("light.quadratic");
+		
 		glUniform3f(lightAmbientLoc, light.Ambient.r, light.Ambient.g, light.Ambient.b);
 		glUniform3f(lightDiffuseLoc, light.Diffuse.r, light.Diffuse.g, light.Diffuse.b);
 		glUniform3f(lightSpecularLoc, light.Specular.r, light.Specular.g, light.Specular.b);
 		glUniform3f(lightPositionLoc, light.Position.x, light.Position.y, light.Position.z);
+		//glUniform3f(lightDirectionLoc, light.Direction.x, light.Direction.y, light.Direction.z);
+		glUniform1f(lightConstantLoc, light.Constant);
+		glUniform1f(lightLinearLoc, light.Linear);
+		glUniform1f(lightQuadraticLoc, light.Quadratic);
 
-
-		// view, projection ], model
+		// view, projection, model
 		GLuint viewLoc = _3dShader->getUniformPosition("view");
 		GLuint projLoc = _3dShader->getUniformPosition("projection");
 		GLuint modelLoc = _3dShader->getUniformPosition("model");
@@ -730,10 +754,17 @@ int main() {
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
 		glBindVertexArray(VAO);
+
+		for (int i = 0; i < 10; i++) 
+		{
 			glm::mat4 model;
+			model = glm::translate(model, cubePositions[i]);
+			float angle = 20.0f * i;
+			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
 			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
 			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
 		glBindVertexArray(0);
 		
 #if USING_DIFFUSE_MAP
@@ -748,7 +779,7 @@ int main() {
 
 		// Setup model
 		glBindVertexArray(lightVAO);
-			model = glm::mat4();
+			glm::mat4 model = glm::mat4();
 			model = glm::translate(model, lightPos);
 			model = glm::scale(model, glm::vec3(0.2f));
 			glUniformMatrix4fv(lightShader->getUniformPosition("model"), 1, GL_FALSE, glm::value_ptr(model));
