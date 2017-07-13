@@ -651,7 +651,7 @@ int main() {
 	glm::vec3 lightPos(1.2f, 0.0f, 0.0f);
 	//Light light(lightPos, glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(1.0f, 1.0f, 1.0f));
 	//DirLight light(glm::vec3(-0.2f, -1.0f, 0.3f), glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(1.0f, 1.0f, 1.0f));
-	PointLight light(lightPos, glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 0.09f, 0.032f);
+	PointLight light(lightPos, glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.4f, 0.4f, 0.4f), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 0.09f, 0.032f);
 	
 	// Material
 #if USING_DIFFUSE_MAP
@@ -720,28 +720,21 @@ int main() {
 		glUniform3f(matSpecularLoc, mat.Specular.r, mat.Specular.g, mat.Specular.b);
 		
 #endif
-		GLint matShineLoc = _3dShader->getUniformPosition("material.shininess");
-		glUniform1f(matShineLoc, mat.Shininess);
+		_3dShader->setFloat("material.shininess", mat.Shininess);
 		
-
 		// Setting up Light
-		GLint lightAmbientLoc = _3dShader->getUniformPosition("light.ambient");
-		GLint lightDiffuseLoc = _3dShader->getUniformPosition("light.diffuse");
-		GLint lightSpecularLoc = _3dShader->getUniformPosition("light.specular");
-		GLint lightPositionLoc = _3dShader->getUniformPosition("light.position");
-		//GLint lightDirectionLoc = _3dShader->getUniformPosition("light.direction");
-		GLint lightConstantLoc = _3dShader->getUniformPosition("light.constant");
-		GLint lightLinearLoc = _3dShader->getUniformPosition("light.linear");
-		GLint lightQuadraticLoc = _3dShader->getUniformPosition("light.quadratic");
-		
-		glUniform3f(lightAmbientLoc, light.Ambient.r, light.Ambient.g, light.Ambient.b);
-		glUniform3f(lightDiffuseLoc, light.Diffuse.r, light.Diffuse.g, light.Diffuse.b);
-		glUniform3f(lightSpecularLoc, light.Specular.r, light.Specular.g, light.Specular.b);
-		glUniform3f(lightPositionLoc, light.Position.x, light.Position.y, light.Position.z);
-		//glUniform3f(lightDirectionLoc, light.Direction.x, light.Direction.y, light.Direction.z);
-		glUniform1f(lightConstantLoc, light.Constant);
-		glUniform1f(lightLinearLoc, light.Linear);
-		glUniform1f(lightQuadraticLoc, light.Quadratic);
+		_3dShader->setVec3("light.ambient", light.Ambient);
+		_3dShader->setVec3("light.diffuse", light.Diffuse);
+		_3dShader->setVec3("light.specular", light.Specular);
+		//_3dShader->setVec3("light.position", light.Position);
+		_3dShader->setVec3("light.position", camera.Position);
+		//_3dShader->setVec3("light.direction", light.Direction);
+		_3dShader->setVec3("light.direction", camera.Front);
+		_3dShader->setFloat("light.constant", light.Constant);
+		_3dShader->setFloat("light.linear", light.Linear);
+		_3dShader->setFloat("light.quadratic", light.Quadratic);
+		_3dShader->setFloat("light.cutOff", glm::cos(glm::radians(12.5f)));
+		_3dShader->setFloat("light.outerCutOff", glm::cos(glm::radians(17.5f)));
 
 		// view, projection, model
 		GLuint viewLoc = _3dShader->getUniformPosition("view");

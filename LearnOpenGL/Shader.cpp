@@ -89,6 +89,16 @@ GLint Shader::getUniformPosition(const char* _varName)
 	return glGetUniformLocation(Program, _varName);
 }
 
+void Shader::setVec3(const char* _varName, glm::vec3 _value)
+{
+	glUniform3f(getUniformPosition(_varName), _value.x, _value.y, _value.z);
+}
+
+void Shader::setFloat(const char* _varName, float _value)
+{
+	glUniform1f(getUniformPosition(_varName), _value);
+}
+
 void Shader::Use()
 {
 	glUseProgram(this->Program);
