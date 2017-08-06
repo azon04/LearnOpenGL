@@ -86,381 +86,6 @@ void do_movement() {
 		camera.ProcessKeyboard(CameraMovement::RIGHT, deltaTime);
 }
 
-void gettingStartedTutorial(GLFWwindow* window) {
-	// Setup vertex, index and buffer
-	GLfloat vertices[] = {
-		// First Triangle
-		0.5f, 0.5f, 0.0f, // Top Right
-		0.5f, -0.5f, 0.0f, // Bottom Right
-		-0.5f, 0.5f, 0.0f, // Top Left
-		-0.5f,-0.5f, 0.0f // Bottom Left
-	};
-
-	GLuint indices[] = {
-		0, 1, 2,
-		3, 1, 2
-	};
-
-	// Vertex Buffer Object
-	GLuint VBO;
-	glGenBuffers(1, &VBO);
-
-	// Element Buffer Object
-	GLuint EBO;
-	glGenBuffers(1, &EBO);
-
-	// VAO
-	GLuint VAO;
-	glGenVertexArrays(1, &VAO);
-
-	// Initialize before drawing unless your object constantly change
-	// 1. Bind Vertex Array Object
-	glBindVertexArray(VAO);
-	// 2. Copy our vertices array in a buffer for OpenGL to use
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-	// 2.1 Element Buffer (Optional)
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-	// 3. then set our vertex attributes pointers
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
-	glEnableVertexAttribArray(0);
-	// 4. Unbind the VAO
-	glBindVertexArray(0);
-
-	// Setup another set of triangles, VBO and VAO, only use VBO without EBO
-	GLfloat vertices2[] = {
-		0.5, -0.5, 0.0f,
-		0.75, -0.75, 0.0f,
-		0.25, -0.75, 0.0f,
-		-0.5f, -0.5f, 0.0f,
-		-0.75, -0.75f, 0.0f,
-		-0.25, -0.75f, 0.0f
-	};
-
-	GLuint VBO2;
-	glGenBuffers(1, &VBO2);
-
-	GLuint VAO2;
-	glGenVertexArrays(1, &VAO2);
-
-	glBindVertexArray(VAO2);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO2);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices2), vertices2, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
-	glEnableVertexAttribArray(0);
-	glBindVertexArray(0);
-
-
-	// Setup vertex with color and texture coordinates
-	GLfloat vertice_colors[] = {
-		// Positions		// Colors			// Texture Coordinate
-		0.5, -0.5f, 0.0f,	1.0f, 0.0f, 0.0f,	1.0f, 0.0f, // Bottom Right
-		-0.5f, -0.5f, 0.0f,	0.0f, 1.0f, 0.0f,	0.0f, 0.0f, // Bottom Left
-		0.0f, 0.5f, 0.0f,	0.0f, 0.0f, 1.0f,	0.5f, 1.0f	// Top
-	};
-
-	GLfloat textCoords[] = {
-		0.0f, 0.0f, // lower left corner
-		1.0f, 0.0f, // lower right corner
-		0.5f, 1.0f // top-center corner
-	};
-
-	GLuint VBO3;
-	glGenBuffers(1, &VBO3);
-
-	GLuint VAO3;
-	glGenVertexArrays(1, &VAO3);
-
-	glBindVertexArray(VAO3);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO3);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertice_colors), vertice_colors, GL_STATIC_DRAW);
-
-	// Position Attributes
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);
-	glEnableVertexAttribArray(0);
-
-	// Color Attributes
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
-	glEnableVertexAttribArray(1);
-
-	// Texture coordinates attributes
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
-	glEnableVertexAttribArray(2);
-	glBindVertexArray(0);
-
-	// 3D cube
-	GLfloat cube_vertices[] = {
-		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-		0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-
-		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-	};
-
-	GLuint VBO4;
-	glGenBuffers(1, &VBO4);
-
-
-	GLuint VAO4;
-	glGenVertexArrays(1, &VAO4);
-
-	glBindVertexArray(VAO4);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO4);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(cube_vertices), cube_vertices, GL_STATIC_DRAW);
-
-	// Position Attributes
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
-	glEnableVertexAttribArray(0);
-
-	// Texture coordinates attributes
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
-	glEnableVertexAttribArray(1);
-	glBindVertexArray(0);
-
-	// Generating Texture
-	int t_width, t_height;
-	unsigned char* image = SOIL_load_image("wall.jpg", &t_width, &t_height, 0, SOIL_LOAD_RGB);
-	int t_width2, t_height2;
-	unsigned char* image2 = SOIL_load_image("awesomeface.png", &t_width2, &t_height2, 0, SOIL_LOAD_RGB);
-
-	GLuint texture;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	// Set Texture Parameters
-	// Set Wrap function
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-	// Set Filtering function
-	// Set Mipmaping functions
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, t_width, t_height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
-	glGenerateMipmap(GL_TEXTURE_2D);
-	SOIL_free_image_data(image);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	GLuint texture2;
-	glGenTextures(1, &texture2);
-	glBindTexture(GL_TEXTURE_2D, texture2);
-	// Set texture parameters
-	// Set wrap functions
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-	// Set filtering and mipmaping function
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, t_width2, t_height2, 0, GL_RGB, GL_UNSIGNED_BYTE, image2);
-	glGenerateMipmap(GL_TEXTURE_2D);
-	SOIL_free_image_data(image2);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	// SET UP TRANSFORM
-
-	glm::vec3 cubePositions[] = {
-		glm::vec3(0.0f, 0.0f,0.0f),
-		glm::vec3(2.0f, 5.0f, -15.0f),
-		glm::vec3(-1.5f, -2.2f, -2.5f),
-		glm::vec3(-3.8f, -2.0f, -12.3f),
-		glm::vec3(2.4f, -0.4f, -3.5f),
-		glm::vec3(-1.7f, 3.0f, -7.5f),
-		glm::vec3(1.3f, -2.0f, -2.5f),
-		glm::vec3(1.5f, 2.0f, -2.5f),
-		glm::vec3(1.5f, 0.2f, -1.5f),
-		glm::vec3(-1.3f, 1.0f, -1.5f)
-	};
-
-
-	glm::mat4 trans;
-	trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
-	trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
-
-	// going 3D
-	glm::mat4 view;
-	//view = glm::translate(view, glm::vec3(0.0f, 0.0f, -10.0f));
-
-	glm::mat4 projection;
-	projection = glm::perspective(glm::radians(45.0f), width / (float)height, 0.1f, 100.0f);
-
-	// set mouse callbacks
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	glfwSetCursorPosCallback(window, mouse_callback);
-	glfwSetScrollCallback(window, scroll_callback);
-
-	// set key callbacks
-	glfwSetKeyCallback(window, key_callback);
-
-	// Setup
-	glEnable(GL_DEPTH_TEST);
-
-	// Main loop of drawing
-	glViewport(0, 0, width, height);
-	while (!glfwWindowShouldClose(window)) {
-		// Check and call events
-		glfwPollEvents();
-
-		// calculate delta time
-		GLfloat currentFrame = glfwGetTime();
-		deltaTime = currentFrame - lastFrame;
-		lastFrame = currentFrame;
-
-		do_movement();
-
-		// Rendering commands here
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		ShaderManager::getInstance()->getShaderByType(SHADER_TYPE_VERTICE_ONLY)->Use();
-		glBindVertexArray(VAO);
-		//glDrawArrays(GL_TRIANGLES, 0, 6);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // Set Wireframe Mode
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // Set back
-		glBindVertexArray(0);
-
-		// Pass uniform value before drawing
-		GLfloat timeValue = glfwGetTime();
-		GLfloat greenValue = (sin(timeValue) / 2) + 0.5;
-		GLint vertexColorPosition = ShaderManager::getInstance()->getShaderByType(SHADER_TYPE_VERTICE_SET_COLOR)->getUniformPosition("ourColor");
-
-		ShaderManager::getInstance()->getShaderByType(SHADER_TYPE_VERTICE_SET_COLOR)->Use();
-		glUniform4f(vertexColorPosition, 0.0f, greenValue, 0.0f, 1.0f);
-		glBindVertexArray(VAO2);
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-		glBindVertexArray(0);
-
-		// Bind textures
-		Shader* textureShader = ShaderManager::getInstance()->getShaderByType(SHADER_TYPE_VERTICE_TEXCOORD);
-		textureShader->Use();
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture);
-		glUniform1i(textureShader->getUniformPosition("ourTexture1"), 0);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, texture2);
-		glUniform1i(textureShader->getUniformPosition("ourTexture2"), 1);
-
-		glm::mat4 updateTrans;
-		updateTrans = glm::translate(updateTrans, glm::vec3(0.5f, -0.5f, 0.0f));
-		updateTrans = glm::rotate(updateTrans, glm::radians((GLfloat)glfwGetTime() * 50.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-
-		GLuint transformLoc = textureShader->getUniformPosition("transform");
-		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(updateTrans));
-
-		GLuint mixValueLoc = textureShader->getUniformPosition("mixValue");
-		glUniform1f(mixValueLoc, 0.5f);
-
-		glBindVertexArray(VAO3);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
-		glBindVertexArray(0);
-
-		glm::mat4 anotherTrans;
-		anotherTrans = glm::translate(anotherTrans, glm::vec3(-0.5f, 0.5f, 0.0f));
-		anotherTrans = glm::scale(anotherTrans, glm::vec3(1.0f, 1.0f, 1.0f) * (GLfloat)sin(glfwGetTime()));
-		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(anotherTrans));
-
-
-		glBindVertexArray(VAO3);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
-		glBindVertexArray(0);
-
-		// Draw 3D
-		Shader* _3dShader = ShaderManager::getInstance()->getShaderByType(SHADER_TYPE_VERTICE_TEXCOORD_TRANSFORM);
-		_3dShader->Use();
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture);
-		glUniform1i(_3dShader->getUniformPosition("ourTexture1"), 0);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, texture2);
-		glUniform1i(_3dShader->getUniformPosition("ourTexture2"), 1);
-
-		mixValueLoc = _3dShader->getUniformPosition("mixValue");
-		glUniform1f(mixValueLoc, 0.5f);
-
-		//GLfloat radius = 10.0f;
-		//GLfloat camX = sin(glfwGetTime()) * radius;
-		//GLfloat camZ = cos(glfwGetTime()) * radius;
-		view = camera.GetViewMatrix();
-
-
-		GLuint viewLoc = _3dShader->getUniformPosition("view");
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-
-		projection = glm::perspective(camera.Zoom, width / (float)height, 0.1f, 100.0f);
-
-		GLuint projLoc = _3dShader->getUniformPosition("projection");
-		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
-
-		glBindVertexArray(VAO4);
-		for (GLuint i = 0; i < 10; i++) {
-			glm::mat4 model;
-			model = glm::translate(model, cubePositions[i]);
-			GLfloat angle = glm::radians(20.0f * i);
-			if (i % 3 == 0) {
-				angle = (glm::radians(20.0f * i + 20.0f * (GLfloat)glfwGetTime()));
-			}
-			model = glm::rotate(model, angle, glm::vec3(1.0f, 0.3f, 0.5f));
-
-			GLuint modelLoc = _3dShader->getUniformPosition("model");
-			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}
-		glBindVertexArray(0);
-
-		// Swap the buffers
-		glfwSwapBuffers(window);
-	}
-
-	// Deleting Buffer vertex array, vertex buffer and Element Buffer
-	glDeleteVertexArrays(1, &VAO);
-	glDeleteVertexArrays(1, &VAO2);
-	glDeleteVertexArrays(1, &VAO3);
-	glDeleteVertexArrays(1, &VAO4);
-	glDeleteBuffers(1, &VBO);
-	glDeleteBuffers(1, &VBO2);
-	glDeleteBuffers(1, &VBO3);
-	glDeleteBuffers(1, &VBO4);
-	glDeleteBuffers(1, &EBO);
-}
-
 int main() {
 
 	glfwInit();
@@ -564,7 +189,7 @@ int main() {
 	glBindVertexArray(0);
 
 
-	// setting up Texture
+	// setting up Textures
 
 	// Setting up Diffuse Map
 	int t_width, t_height;
@@ -647,11 +272,15 @@ int main() {
 	glm::mat4 projection;
 	projection = glm::perspective(glm::radians(45.0f), width / (float)height, 0.1f, 100.0f);
 
+	// Setup Lights
+	// Setup Directional Light
+	DirLight dirLight(glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(1.0f, 1.0f, 1.0f));
+	
 	// light attributes
-	glm::vec3 lightPos(1.2f, 0.0f, 0.0f);
+	//glm::vec3 lightPos(1.2f, 0.0f, 0.0f);
 	//Light light(lightPos, glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(1.0f, 1.0f, 1.0f));
 	//DirLight light(glm::vec3(-0.2f, -1.0f, 0.3f), glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(1.0f, 1.0f, 1.0f));
-	PointLight light(lightPos, glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.4f, 0.4f, 0.4f), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 0.09f, 0.032f);
+	//PointLight light(lightPos, glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.4f, 0.4f, 0.4f), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 0.09f, 0.032f);
 	
 	// Material
 #if USING_DIFFUSE_MAP
@@ -722,19 +351,19 @@ int main() {
 #endif
 		_3dShader->setFloat("material.shininess", mat.Shininess);
 		
-		// Setting up Light
-		_3dShader->setVec3("light.ambient", light.Ambient);
-		_3dShader->setVec3("light.diffuse", light.Diffuse);
-		_3dShader->setVec3("light.specular", light.Specular);
+		// Setting up Directional Light
+		_3dShader->setVec3("dirLight.ambient", dirLight.Ambient);
+		_3dShader->setVec3("dirLight.diffuse", dirLight.Diffuse);
+		_3dShader->setVec3("dirLight.specular", dirLight.Specular);
 		//_3dShader->setVec3("light.position", light.Position);
-		_3dShader->setVec3("light.position", camera.Position);
-		//_3dShader->setVec3("light.direction", light.Direction);
-		_3dShader->setVec3("light.direction", camera.Front);
+		//_3dShader->setVec3("light.position", camera.Position);
+		_3dShader->setVec3("dirLight.direction", dirLight.Direction);
+		/*_3dShader->setVec3("light.direction", camera.Front);
 		_3dShader->setFloat("light.constant", light.Constant);
 		_3dShader->setFloat("light.linear", light.Linear);
 		_3dShader->setFloat("light.quadratic", light.Quadratic);
 		_3dShader->setFloat("light.cutOff", glm::cos(glm::radians(12.5f)));
-		_3dShader->setFloat("light.outerCutOff", glm::cos(glm::radians(17.5f)));
+		_3dShader->setFloat("light.outerCutOff", glm::cos(glm::radians(17.5f)));*/
 
 		// view, projection, model
 		GLuint viewLoc = _3dShader->getUniformPosition("view");
@@ -764,7 +393,7 @@ int main() {
 		glBindTexture(GL_TEXTURE_2D, 0);
 #endif
 		// Drawing Light
-		Shader* lightShader = ShaderManager::getInstance()->getShaderByType(SHADER_TYPE_VERTICE_LIGHT_REP);
+		/*Shader* lightShader = ShaderManager::getInstance()->getShaderByType(SHADER_TYPE_VERTICE_LIGHT_REP);
 		lightShader->Use();
 
 		glUniformMatrix4fv(lightShader->getUniformPosition("view"), 1, GL_FALSE, glm::value_ptr(view));
@@ -778,7 +407,8 @@ int main() {
 			glUniformMatrix4fv(lightShader->getUniformPosition("model"), 1, GL_FALSE, glm::value_ptr(model));
 
 			glDrawArrays(GL_TRIANGLES, 0, 36);
-		glBindVertexArray(0);
+		glBindVertexArray(0);*/
+
 		// Swap the buffers
 		glfwSwapBuffers(window);
 	}
