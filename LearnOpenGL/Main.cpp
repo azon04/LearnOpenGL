@@ -15,6 +15,7 @@
 #include "Light.h"
 #include "DirLight.h"
 #include "PointLight.h"
+#include "SpotLight.h"
 
 #include "SOIL.h"
 
@@ -278,11 +279,14 @@ int main() {
 	
 	// Set up Point Lights
 	PointLight pointLights[4] = {
-		{ glm::vec3(0.7f, 0.2f, 2.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 0.07f, 0.017f },
-		{ glm::vec3(2.3f, 3.3f, -4.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 0.045f, 0.0075f },
-		{ glm::vec3(-4.0f, 2.0f, -12.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 0.022f, 0.0019f },
-		{ glm::vec3(0.0f, 0.0f, -3.0f), glm::vec3(1.0f, 1.0f, 0.0f), glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 0.022f, 0.0019f },
+		{ glm::vec3(0.7f, 0.2f, 2.0f), glm::vec3(0.0f, 0.75f, 0.0f), glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(0.1f, 0.1f, 0.1f), 1.0f, 0.07f, 0.017f },
+		{ glm::vec3(2.3f, 3.3f, -4.0f), glm::vec3(0.0f, 0.75f, 0.0f), glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(0.1f, 0.1f, 0.1f), 1.0f, 0.045f, 0.0075f },
+		{ glm::vec3(-4.0f, 2.0f, -12.0f), glm::vec3(0.0f, 0.75f, 0.0f), glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(0.1f, 0.1f, 0.1f), 1.0f, 0.022f, 0.0019f },
+		{ glm::vec3(0.0f, 0.0f, -3.0f), glm::vec3(0.0f, 0.75f, 0.0f), glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(0.1f, 0.1f, 0.1f), 1.0f, 0.022f, 0.0019f },
 	};
+
+	// Setup SpotLight
+	SpotLight spotLight(camera.Position, camera.Front, glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 0.09f, 0.032f, glm::cos(glm::radians(12.5f)), glm::cos(glm::radians(17.5f)));
 
 	// Material
 #if USING_DIFFUSE_MAP
@@ -316,7 +320,7 @@ int main() {
 		do_movement();
 
 		// Rendering commands here
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// Draw 3D
@@ -392,6 +396,21 @@ int main() {
 		_3dShader->setVec3("pointLights[3].diffuse", pointLights[3].Diffuse);
 		_3dShader->setVec3("pointLights[3].specular", pointLights[3].Specular);
 
+		// Setup spot light
+		spotLight.Position = camera.Position;
+		spotLight.Direction = camera.Front;
+		_3dShader->setVec3("spotLight.position", spotLight.Position);
+		_3dShader->setVec3("spotLight.direction", spotLight.Direction);
+		_3dShader->setFloat("spotLight.cutOff", spotLight.CutOff);
+		_3dShader->setFloat("spotLight.outerCutOff", spotLight.OuterCutOff);
+
+		_3dShader->setVec3("spotLight.ambient", spotLight.Ambient);
+		_3dShader->setVec3("spotLight.diffuse", spotLight.Diffuse);
+		_3dShader->setVec3("spotLight.specular", spotLight.Specular);
+		_3dShader->setFloat("spotLight.constant", spotLight.Constant);
+		_3dShader->setFloat("spotLight.linear", spotLight.Linear);
+		_3dShader->setFloat("spotLight.quadratic", spotLight.Quadratic);
+
 		// view, projection, model
 		GLuint viewLoc = _3dShader->getUniformPosition("view");
 		GLuint projLoc = _3dShader->getUniformPosition("projection");
@@ -425,7 +444,7 @@ int main() {
 
 		glUniformMatrix4fv(lightShader->getUniformPosition("view"), 1, GL_FALSE, glm::value_ptr(view));
 		glUniformMatrix4fv(lightShader->getUniformPosition("projection"), 1, GL_FALSE, glm::value_ptr(projection));
-
+		
 		// Setup model
 		glBindVertexArray(lightVAO);
 		for (int i = 0; i < 4; i++)
@@ -434,6 +453,7 @@ int main() {
 			model = glm::translate(model, pointLights[i].Position);
 			model = glm::scale(model, glm::vec3(0.2f));
 			glUniformMatrix4fv(lightShader->getUniformPosition("model"), 1, GL_FALSE, glm::value_ptr(model));
+			lightShader->setVec3("diffuse", pointLights[i].Diffuse);
 
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
