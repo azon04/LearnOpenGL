@@ -16,6 +16,7 @@
 #include "DirLight.h"
 #include "PointLight.h"
 #include "SpotLight.h"
+#include "Model.h"
 
 #include "SOIL.h"
 
@@ -273,6 +274,8 @@ int main() {
 	glm::mat4 projection;
 	projection = glm::perspective(glm::radians(45.0f), width / (float)height, 0.1f, 100.0f);
 
+	glm::vec4 testV = projection * glm::vec4(-0.130141124, -0.328729808, -5.25000000, 1.0f);
+	
 	// Setup Lights
 	// Setup Directional Light
 	DirLight dirLight(glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.8f, 0.8f, 0.8f), glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(0.5f, 0.5f, 0.5f));
@@ -294,6 +297,9 @@ int main() {
 #else
 	Material mat(glm::vec3(1.0f, 0.5f, 0.31f), glm::vec3(1.0f, 0.5f, 0.31f), glm::vec3(0.5f, 0.5f, 0.5f), 32.0f);
 #endif
+
+	// Model Loading
+	Model ourModel("Resources/nanosuit/nanosuit.obj");
 
 	// set mouse callbacks
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -434,6 +440,15 @@ int main() {
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 		glBindVertexArray(0);
+
+		// render the loaded model
+		{
+			glm::mat4 model;
+			model = glm::translate(model, glm::vec3(0.0f, -1.75f, 0.0f));
+			model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
+			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+			ourModel.Draw(_3dShader);
+		}
 		
 #if USING_DIFFUSE_MAP
 		glBindTexture(GL_TEXTURE_2D, 0);

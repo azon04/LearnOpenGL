@@ -10,7 +10,12 @@ struct Material {
 
 	// This is new version, using diffuse and ambient as a texture
 	sampler2D diffuse;
+	sampler2D diffuse1;
+	sampler2D diffuse2;
+
 	sampler2D specular;
+	sampler2D specular1;
+	
 	float shininess;
 };
 
