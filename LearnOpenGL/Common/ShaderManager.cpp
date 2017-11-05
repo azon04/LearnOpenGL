@@ -29,6 +29,7 @@ void ShaderManager::Init()
 	Shader* _3dLightColorShader = new Shader("Shaders/Simple3DShaderLightTut.vs", "Shaders/SimpleShaderLightColor.frag");
 	Shader* lightRepShader = new Shader("Shaders/Simple3DShaderLightTut.vs", "Shaders/SimpleFragmentLightRep.frag");
 	Shader* lightGuroudShader = new Shader("Shaders/Simple3DShaderLightColor.vs", "Shaders/SimpleFragmentShader2.frag");
+	Shader* DepthShader = new Shader("Shaders/Simple3DShaderLightTut.vs", "Shaders/SimpleShaderFragDepth.frag");
 
 	m_instance->m_shaders.push_back(shader);
 	m_instance->m_shaders.push_back(shader2);
@@ -38,6 +39,7 @@ void ShaderManager::Init()
 	m_instance->m_shaders.push_back(_3dLightColorShader);
 	m_instance->m_shaders.push_back(lightRepShader);
 	m_instance->m_shaders.push_back(lightGuroudShader);
+	m_instance->m_shaders.push_back(DepthShader);
 }
 
 void ShaderManager::Destroy()

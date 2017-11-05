@@ -195,7 +195,7 @@ int main() {
 
 	// Setting up Diffuse Map
 	int t_width, t_height;
-	unsigned char* image = SOIL_load_image("container2.png", &t_width, &t_height, 0, SOIL_LOAD_RGB);
+	unsigned char* image = SOIL_load_image("Resources/textures/container2.png", &t_width, &t_height, 0, SOIL_LOAD_RGB);
 
 	GLuint diffuseMap;
 	
@@ -220,7 +220,7 @@ int main() {
 
 	// Setting up Specular map
 	int s_width, s_height;
-	unsigned char* specular_image = SOIL_load_image("container2_specular.png", &s_width, &s_height, 0, SOIL_LOAD_RGB);
+	unsigned char* specular_image = SOIL_load_image("Resources/textures/container2_specular.png", &s_width, &s_height, 0, SOIL_LOAD_RGB);
 
 	GLuint specularMap;
 	
@@ -273,8 +273,6 @@ int main() {
 
 	glm::mat4 projection;
 	projection = glm::perspective(glm::radians(45.0f), width / (float)height, 0.1f, 100.0f);
-
-	glm::vec4 testV = projection * glm::vec4(-0.130141124, -0.328729808, -5.25000000, 1.0f);
 	
 	// Setup Lights
 	// Setup Directional Light

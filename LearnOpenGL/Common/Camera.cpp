@@ -25,7 +25,6 @@ Camera::~Camera()
 
 glm::mat4 Camera::GetViewMatrix()
 {
-
 	glm::vec3 zaxis = -Front;
 
 	glm::vec3 xaxis = glm::normalize(glm::cross(glm::normalize(WorldUp), zaxis));

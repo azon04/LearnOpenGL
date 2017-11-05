@@ -13,14 +13,14 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Shaders">
-      <UniqueIdentifier>{dc6c53eb-fdc9-4b14-9560-245280a749ef}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Common">
-      <UniqueIdentifier>{53aaf2cf-03a7-4ea9-8dbe-5882cbe847d3}</UniqueIdentifier>
+      <UniqueIdentifier>{20adef56-65f1-467f-89b8-c13c14909680}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Common\Camera.cpp">
       <Filter>Common</Filter>
     </ClCompile>
@@ -41,9 +41,6 @@
     </ClCompile>
     <ClCompile Include="Common\SpotLight.cpp">
       <Filter>Common</Filter>
-    </ClCompile>
-    <ClCompile Include="LearnOpenGL-Basic\Main.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -77,43 +74,5 @@
     <ClInclude Include="Common\SpotLight.h">
       <Filter>Common</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Shaders\Simple3DShader.vs">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="Shaders\Simple3DShaderLightColor.vs">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="Shaders\Simple3DShaderLightTut.vs">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="Shaders\SimpleFragmentLightRep.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="Shaders\SimpleFragmentShader.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="Shaders\SimpleFragmentShader2.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="Shaders\SimpleShaderLightColor.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="Shaders\SimpleTextureShader.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="Shaders\SimpleTextureShader.vs">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="Shaders\SimpleVertexColorShader.vs">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="Shaders\SimpleVertexShader.vs">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="Shaders\SimpleShaderFragDepth.frag">
-      <Filter>Shaders</Filter>
-    </None>
   </ItemGroup>
 </Project>
