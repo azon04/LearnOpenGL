@@ -3,6 +3,7 @@ includes/
 glfw/
 glew-2.0.0/
 soil/
+assimp-3.3.1/
 LearnOpenGL/Debug
 Debug/
 .vs/
