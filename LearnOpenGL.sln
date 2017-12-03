@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LearnOpenGL-Basic", "LearnO
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LearnOpenGL-DepthTest", "LearnOpenGL\LearnOpenGL-DepthTest.vcxproj", "{9E33B45C-597F-4F7E-A830-C97E1E4C065E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LearnOpenGL-Stencil", "LearnOpenGL\LearnOpenGL-Stencil.vcxproj", "{42062B10-E9FE-44D9-8B57-2E7A2E563A0F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -31,6 +33,14 @@ Global
 		{9E33B45C-597F-4F7E-A830-C97E1E4C065E}.Release|x64.Build.0 = Release|x64
 		{9E33B45C-597F-4F7E-A830-C97E1E4C065E}.Release|x86.ActiveCfg = Release|Win32
 		{9E33B45C-597F-4F7E-A830-C97E1E4C065E}.Release|x86.Build.0 = Release|Win32
+		{42062B10-E9FE-44D9-8B57-2E7A2E563A0F}.Debug|x64.ActiveCfg = Debug|x64
+		{42062B10-E9FE-44D9-8B57-2E7A2E563A0F}.Debug|x64.Build.0 = Debug|x64
+		{42062B10-E9FE-44D9-8B57-2E7A2E563A0F}.Debug|x86.ActiveCfg = Debug|Win32
+		{42062B10-E9FE-44D9-8B57-2E7A2E563A0F}.Debug|x86.Build.0 = Debug|Win32
+		{42062B10-E9FE-44D9-8B57-2E7A2E563A0F}.Release|x64.ActiveCfg = Release|x64
+		{42062B10-E9FE-44D9-8B57-2E7A2E563A0F}.Release|x64.Build.0 = Release|x64
+		{42062B10-E9FE-44D9-8B57-2E7A2E563A0F}.Release|x86.ActiveCfg = Release|Win32
+		{42062B10-E9FE-44D9-8B57-2E7A2E563A0F}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
