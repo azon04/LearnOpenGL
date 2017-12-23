@@ -408,14 +408,12 @@ int main() {
 		glm::mat4 view = camera.GetViewMatrix();
 
 		// position of camera
-		GLint viewPosLoc = shader->getUniformPosition("viewPos");
-		glUniform3f(viewPosLoc, camera.Position.x, camera.Position.y, camera.Position.z);
+		shader->setVec3("viewPos", camera.Position);
 
 		if (!bShowDepthOnly)
 		{
 			// Setting up Material
-			GLint diffuseMapLoc = shader->getUniformPosition("material.diffuse");
-			glUniform1i(diffuseMapLoc, 0);
+			shader->setInt("material.diffuse", 0);
 
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, diffuseMap);
@@ -478,21 +476,17 @@ int main() {
 		}
 
 		// view, projection, model
-		GLuint viewLoc = shader->getUniformPosition("view");
-		GLuint projLoc = shader->getUniformPosition("projection");
-		GLuint modelLoc = shader->getUniformPosition("model");
-
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-
 		projection = glm::perspective(camera.Zoom, width / (float)height, 0.1f, 100.0f);
-		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+		
+		shader->setMat4("view", view);
+		shader->setMat4("projection", projection);
 
 		glBindVertexArray(VAO_plane);
 
 		glm::mat4 model;
 		model = glm::scale(model, glm::vec3(5.0f));
 
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		shader->setMat4("model", model);
 
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		
@@ -506,7 +500,8 @@ int main() {
 			glm::mat4 model_cube;
 			model_cube = glm::translate(model_cube, cubePositions[i]);
 
-			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model_cube));
+			shader->setMat4("model", model_cube);
+
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 
@@ -523,6 +518,8 @@ int main() {
 	// Deleting Buffer vertex array, vertex buffer and Element Buffer
 	glDeleteVertexArrays(1, &VAO_plane);
 	glDeleteBuffers(1, &VBO_plane);
+	glDeleteVertexArrays(1, &VAO_cube);
+	glDeleteBuffers(1, &VBO_cube);
 
 	ShaderManager::Destroy();
 

@@ -334,19 +334,16 @@ int main() {
 		glm::mat4 view = camera.GetViewMatrix();
 
 		// position of camera
-		GLint viewPosLoc = _3dShader->getUniformPosition("viewPos");
-		glUniform3f(viewPosLoc, camera.Position.x, camera.Position.y, camera.Position.z);
+		_3dShader->setVec3("viewPos", camera.Position);
 
 		// Setting up Material
 #if USING_DIFFUSE_MAP
-		GLint diffuseMapLoc = _3dShader->getUniformPosition("material.diffuse");
-		glUniform1i(diffuseMapLoc, 0);
-
+		_3dShader->setInt("material.diffuse", 0);
+		
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, diffuseMap);
 
-		GLint specularMapLoc = _3dShader->getUniformPosition("material.specular");
-		glUniform1i(specularMapLoc, 1);
+		_3dShader->setInt("material.specular", 1);
 
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, specularMap);
@@ -416,14 +413,10 @@ int main() {
 		_3dShader->setFloat("spotLight.quadratic", spotLight.Quadratic);
 
 		// view, projection, model
-		GLuint viewLoc = _3dShader->getUniformPosition("view");
-		GLuint projLoc = _3dShader->getUniformPosition("projection");
-		GLuint modelLoc = _3dShader->getUniformPosition("model");
-
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-
 		projection = glm::perspective(camera.Zoom, width / (float)height, 0.1f, 100.0f);
-		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+		
+		_3dShader->setMat4("view", view);
+		_3dShader->setMat4("projection", projection);
 
 		glBindVertexArray(VAO);
 
@@ -433,7 +426,8 @@ int main() {
 			model = glm::translate(model, cubePositions[i]);
 			float angle = 20.0f * i;
 			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+			
+			_3dShader->setMat4("model", model);
 
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
@@ -444,7 +438,7 @@ int main() {
 			glm::mat4 model;
 			model = glm::translate(model, glm::vec3(0.0f, -1.75f, 0.0f));
 			model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
-			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+			_3dShader->setMat4("model", model);
 			ourModel.Draw(_3dShader);
 		}
 		
@@ -455,9 +449,9 @@ int main() {
 		Shader* lightShader = ShaderManager::getInstance()->getShaderByType(SHADER_TYPE_VERTICE_LIGHT_REP);
 		lightShader->Use();
 
-		glUniformMatrix4fv(lightShader->getUniformPosition("view"), 1, GL_FALSE, glm::value_ptr(view));
-		glUniformMatrix4fv(lightShader->getUniformPosition("projection"), 1, GL_FALSE, glm::value_ptr(projection));
-		
+		lightShader->setMat4("view", view);
+		lightShader->setMat4("projection", projection);
+
 		// Setup model
 		glBindVertexArray(lightVAO);
 		for (int i = 0; i < 4; i++)
@@ -465,7 +459,7 @@ int main() {
 			glm::mat4 model = glm::mat4();
 			model = glm::translate(model, pointLights[i].Position);
 			model = glm::scale(model, glm::vec3(0.2f));
-			glUniformMatrix4fv(lightShader->getUniformPosition("model"), 1, GL_FALSE, glm::value_ptr(model));
+			lightShader->setMat4("model", model);
 			lightShader->setVec3("diffuse", pointLights[i].Diffuse);
 
 			glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -478,6 +472,7 @@ int main() {
 
 	// Deleting Buffer vertex array, vertex buffer and Element Buffer
 	glDeleteVertexArrays(1, &VAO);
+	glDeleteVertexArrays(1, &lightVAO);
 	glDeleteBuffers(1, &VBO);
 
 	ShaderManager::Destroy();

@@ -99,6 +99,16 @@ void Shader::setFloat(const char* _varName, float _value)
 	glUniform1f(getUniformPosition(_varName), _value);
 }
 
+void Shader::setInt(const char* _varName, int _value)
+{
+	glUniform1i(getUniformPosition(_varName), _value);
+}
+
+void Shader::setMat4(const char* _varName, glm::mat4 _value)
+{
+	glUniformMatrix4fv(getUniformPosition(_varName), 1, GL_FALSE, glm::value_ptr(_value));
+}
+
 void Shader::Use()
 {
 	glUseProgram(this->Program);

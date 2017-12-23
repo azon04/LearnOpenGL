@@ -27,6 +27,8 @@ public:
 
 	void setVec3(const char* _varName, glm::vec3 _value);
 	void setFloat(const char* _varName, float _value);
+	void setInt(const char* _varName, int _value);
+	void setMat4(const char* _varName, glm::mat4 _value);
 
 	// Use the program
 	void Use();

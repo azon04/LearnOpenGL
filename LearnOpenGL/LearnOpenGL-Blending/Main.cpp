@@ -473,14 +473,12 @@ int main() {
 		glm::mat4 view = camera.GetViewMatrix();
 
 		// position of camera
-		GLint viewPosLoc = shader->getUniformPosition("viewPos");
-		glUniform3f(viewPosLoc, camera.Position.x, camera.Position.y, camera.Position.z);
+		shader->setVec3("viewPos", camera.Position);
 
 		if (!bShowDepthOnly)
 		{
 			// Setting up Material
-			GLint diffuseMapLoc = shader->getUniformPosition("material.diffuse");
-			glUniform1i(diffuseMapLoc, 0);
+			shader->setInt("material.diffuse", 0);
 
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, diffuseMap);
@@ -543,22 +541,18 @@ int main() {
 		}
 
 		// view, projection, model
-		GLuint viewLoc = shader->getUniformPosition("view");
-		GLuint projLoc = shader->getUniformPosition("projection");
-		GLuint modelLoc = shader->getUniformPosition("model");
-
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-
 		projection = glm::perspective(camera.Zoom, width / (float)height, 0.1f, 100.0f);
-		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+		
+		shader->setMat4("view", view);
+		shader->setMat4("projection", projection);
 
 		glBindVertexArray(VAO_plane);
 
 		glm::mat4 model;
 		model = glm::scale(model, glm::vec3(5.0f));
 
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-
+		shader->setMat4("model", model);
+		
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		
 		glBindVertexArray(VAO_cube);
@@ -570,8 +564,8 @@ int main() {
 		{
 			glm::mat4 model_cube;
 			model_cube = glm::translate(model_cube, cubePositions[i]);
+			shader->setMat4("model", model_cube);
 
-			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model_cube));
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 
@@ -585,38 +579,29 @@ int main() {
 		Shader* transparentShader = ShaderManager::getInstance()->getShaderByType(SHADER_TYPE_VERTICE_TRANSPARENT_COLOR);
 		
 		transparentShader->Use();
-		
-		viewLoc = transparentShader->getUniformPosition("view");
-		projLoc = transparentShader->getUniformPosition("projection");
-		modelLoc = transparentShader->getUniformPosition("model");
-		GLuint texture1 = transparentShader->getUniformPosition("texture1");
 
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+		transparentShader->setMat4("view", view);
+		transparentShader->setMat4("projection", projection);
 
-		glUniform1i(texture1, 0);
+		transparentShader->setInt("texture1", 0);
 
-		glBindVertexArray(VAO_vegetation);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, diffuseMap_grass);
+
+		glBindVertexArray(VAO_vegetation);
 
 		for (int i = 0; i < 5; i++)
 		{
 			model = glm::mat4();
 			model = glm::translate(model, vegetationPositions[i]);
 
-			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+			transparentShader->setMat4("model", model);
 
 			glDrawArrays(GL_TRIANGLES, 0, 6);
-
 		}
 
 		glBindVertexArray(0);
-
-#if USING_DIFFUSE_MAP
 		glBindTexture(GL_TEXTURE_2D, 0);
-#endif
-
 
 		// Swap the buffers
 		glfwSwapBuffers(window);
