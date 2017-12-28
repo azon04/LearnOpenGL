@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <map>
 
 #include "ShaderManager.h"
 #include "Shader.h"
@@ -23,6 +24,10 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
+
+#define GLM_ENABLE_EXPERIMENTAL
+
+#include "glm/gtx/norm.hpp"
 
 // Global Variables
 Camera camera(0.0f, 2.0f, 4.0f, 0.0f, 1.0f, 0.0f);
@@ -261,7 +266,6 @@ int main() {
 
 
 	// setting up Textures
-
 	int t_width, t_height;
 	unsigned char* image = SOIL_load_image("Resources/textures/wall.jpg", &t_width, &t_height, 0, SOIL_LOAD_RGB);
 
@@ -310,14 +314,18 @@ int main() {
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	// Texture Vegetation
+	// Texture Transparent
+#if 1
+	image = SOIL_load_image("Resources/textures/blending_transparent_window.png", &t_width, &t_height, 0, SOIL_LOAD_RGBA);
+#else
 	image = SOIL_load_image("Resources/textures/grass.png", &t_width, &t_height, 0, SOIL_LOAD_RGBA);
+#endif
 
-	GLuint diffuseMap_grass;
+	GLuint diffuseMap_transparent;
 
-	glGenTextures(1, &diffuseMap_grass);
+	glGenTextures(1, &diffuseMap_transparent);
 
-	glBindTexture(GL_TEXTURE_2D, diffuseMap_grass);
+	glBindTexture(GL_TEXTURE_2D, diffuseMap_transparent);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
@@ -348,12 +356,12 @@ int main() {
 		glm::vec3(1.0f,  0.5, 0.0f)
 	};
 
-	glm::vec3 vegetationPositions[5] = {
-		glm::vec3(-1.5f,  1.0f, -0.48f),
-		glm::vec3(1.5f,  1.0f,  0.51f),
-		glm::vec3(0.0f,  1.0f,  0.7f),
-		glm::vec3(-0.3f,  1.0f, -2.3f),
-		glm::vec3(0.5f,  1.0f, -0.6f)
+	glm::vec3 transparentPositions[5] = {
+		glm::vec3(-1.5f,  0.5f, -0.48f),
+		glm::vec3(1.5f,  0.5f,  0.51f),
+		glm::vec3(0.0f,  0.5f,  0.7f),
+		glm::vec3(-0.3f,  0.5f, -2.3f),
+		glm::vec3(0.5f,  0.5f, -0.6f)
 	};
 	
 	glm::mat4 projection;
@@ -391,7 +399,13 @@ int main() {
 	// Setup
 	glEnable(GL_DEPTH_TEST);
 
-	bool bShowDepthOnly = false;
+	// Enable Blending
+	glEnable(GL_BLEND);
+#if 0
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+#else
+	glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
+#endif
 
 	// Main loop of drawing
 	glViewport(0, 0, width, height);
@@ -411,63 +425,8 @@ int main() {
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		// Select Depth function
-		if (keys[GLFW_KEY_1])
-		{
-			glDepthFunc(GL_ALWAYS);
-			std::cout << "Change Depth function to Always" << std::endl;
-		}
-		else if (keys[GLFW_KEY_2])
-		{
-			glDepthFunc(GL_NEVER);
-			std::cout << "Change Depth function to Never" << std::endl;
-		}
-		else if (keys[GLFW_KEY_3])
-		{
-			glDepthFunc(GL_LESS);
-			std::cout << "Change Depth function to Less" << std::endl;
-		}
-		else if (keys[GLFW_KEY_4])
-		{
-			glDepthFunc(GL_EQUAL);
-			std::cout << "Change Depth function to Equal" << std::endl;
-		}
-		else if (keys[GLFW_KEY_5])
-		{
-			glDepthFunc(GL_LEQUAL);
-			std::cout << "Change Depth function to Less Equal" << std::endl;
-		}
-		else if (keys[GLFW_KEY_6])
-		{
-			glDepthFunc(GL_GREATER);
-			std::cout << "Change Depth function to Greater" << std::endl;
-		}
-		else if (keys[GLFW_KEY_7])
-		{
-			glDepthFunc(GL_NOTEQUAL);
-			std::cout << "Change Depth function to Not Equal" << std::endl;
-		}
-		else if (keys[GLFW_KEY_8])
-		{
-			glDepthFunc(GL_GEQUAL);
-			std::cout << "Change Depth function to Greater Equal" << std::endl;
-		}
-
-		if (keys[GLFW_KEY_V])
-		{
-			bShowDepthOnly = true;
-		}
-		else if( keys[GLFW_KEY_N])
-		{
-			bShowDepthOnly = false;
-		}
-
 		// Draw 3D
 		Shader* shader = ShaderManager::getInstance()->getShaderByType(SHADER_TYPE_VERTICE_LIGHT_PHONG);
-		if (bShowDepthOnly)
-		{
-			shader = ShaderManager::getInstance()->getShaderByType(SHADER_TYPE_VERTICE_DEPTH_ONLY);
-		}
 		shader->Use();
 
 		glm::mat4 view = camera.GetViewMatrix();
@@ -475,70 +434,67 @@ int main() {
 		// position of camera
 		shader->setVec3("viewPos", camera.Position);
 
-		if (!bShowDepthOnly)
-		{
-			// Setting up Material
-			shader->setInt("material.diffuse", 0);
+		// Setting up Material
+		shader->setInt("material.diffuse", 0);
 
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, diffuseMap);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, diffuseMap);
 
-			shader->setFloat("material.shininess", mat.Shininess);
+		shader->setFloat("material.shininess", mat.Shininess);
 
-			// Setting up Directional Light
-			shader->setVec3("dirLight.ambient", dirLight.Ambient);
-			shader->setVec3("dirLight.diffuse", dirLight.Diffuse);
-			shader->setVec3("dirLight.specular", dirLight.Specular);
-			shader->setVec3("dirLight.direction", dirLight.Direction);
+		// Setting up Directional Light
+		shader->setVec3("dirLight.ambient", dirLight.Ambient);
+		shader->setVec3("dirLight.diffuse", dirLight.Diffuse);
+		shader->setVec3("dirLight.specular", dirLight.Specular);
+		shader->setVec3("dirLight.direction", dirLight.Direction);
 
-			// Setting up Point Lights
-			shader->setVec3("pointLights[0].position", pointLights[0].Position);
-			shader->setFloat("pointLights[0].constant", pointLights[0].Constant);
-			shader->setFloat("pointLights[0].linear", pointLights[0].Linear);
-			shader->setFloat("pointLights[0].quadratic", pointLights[0].Quadratic);
-			shader->setVec3("pointLights[0].ambient", pointLights[0].Ambient);
-			shader->setVec3("pointLights[0].diffuse", pointLights[0].Diffuse);
-			shader->setVec3("pointLights[0].specular", pointLights[0].Specular);
+		// Setting up Point Lights
+		shader->setVec3("pointLights[0].position", pointLights[0].Position);
+		shader->setFloat("pointLights[0].constant", pointLights[0].Constant);
+		shader->setFloat("pointLights[0].linear", pointLights[0].Linear);
+		shader->setFloat("pointLights[0].quadratic", pointLights[0].Quadratic);
+		shader->setVec3("pointLights[0].ambient", pointLights[0].Ambient);
+		shader->setVec3("pointLights[0].diffuse", pointLights[0].Diffuse);
+		shader->setVec3("pointLights[0].specular", pointLights[0].Specular);
 
-			shader->setVec3("pointLights[1].position", pointLights[1].Position);
-			shader->setFloat("pointLights[1].constant", pointLights[1].Constant);
-			shader->setFloat("pointLights[1].linear", pointLights[1].Linear);
-			shader->setFloat("pointLights[1].quadratic", pointLights[1].Quadratic);
-			shader->setVec3("pointLights[1].ambient", pointLights[1].Ambient);
-			shader->setVec3("pointLights[1].diffuse", pointLights[1].Diffuse);
-			shader->setVec3("pointLights[1].specular", pointLights[1].Specular);
+		shader->setVec3("pointLights[1].position", pointLights[1].Position);
+		shader->setFloat("pointLights[1].constant", pointLights[1].Constant);
+		shader->setFloat("pointLights[1].linear", pointLights[1].Linear);
+		shader->setFloat("pointLights[1].quadratic", pointLights[1].Quadratic);
+		shader->setVec3("pointLights[1].ambient", pointLights[1].Ambient);
+		shader->setVec3("pointLights[1].diffuse", pointLights[1].Diffuse);
+		shader->setVec3("pointLights[1].specular", pointLights[1].Specular);
 
-			shader->setVec3("pointLights[2].position", pointLights[2].Position);
-			shader->setFloat("pointLights[2].constant", pointLights[2].Constant);
-			shader->setFloat("pointLights[2].linear", pointLights[2].Linear);
-			shader->setFloat("pointLights[2].quadratic", pointLights[2].Quadratic);
-			shader->setVec3("pointLights[2].ambient", pointLights[2].Ambient);
-			shader->setVec3("pointLights[2].diffuse", pointLights[2].Diffuse);
-			shader->setVec3("pointLights[2].specular", pointLights[2].Specular);
+		shader->setVec3("pointLights[2].position", pointLights[2].Position);
+		shader->setFloat("pointLights[2].constant", pointLights[2].Constant);
+		shader->setFloat("pointLights[2].linear", pointLights[2].Linear);
+		shader->setFloat("pointLights[2].quadratic", pointLights[2].Quadratic);
+		shader->setVec3("pointLights[2].ambient", pointLights[2].Ambient);
+		shader->setVec3("pointLights[2].diffuse", pointLights[2].Diffuse);
+		shader->setVec3("pointLights[2].specular", pointLights[2].Specular);
 
-			shader->setVec3("pointLights[3].position", pointLights[3].Position);
-			shader->setFloat("pointLights[3].constant", pointLights[3].Constant);
-			shader->setFloat("pointLights[3].linear", pointLights[3].Linear);
-			shader->setFloat("pointLights[3].quadratic", pointLights[3].Quadratic);
-			shader->setVec3("pointLights[3].ambient", pointLights[3].Ambient);
-			shader->setVec3("pointLights[3].diffuse", pointLights[3].Diffuse);
-			shader->setVec3("pointLights[3].specular", pointLights[3].Specular);
+		shader->setVec3("pointLights[3].position", pointLights[3].Position);
+		shader->setFloat("pointLights[3].constant", pointLights[3].Constant);
+		shader->setFloat("pointLights[3].linear", pointLights[3].Linear);
+		shader->setFloat("pointLights[3].quadratic", pointLights[3].Quadratic);
+		shader->setVec3("pointLights[3].ambient", pointLights[3].Ambient);
+		shader->setVec3("pointLights[3].diffuse", pointLights[3].Diffuse);
+		shader->setVec3("pointLights[3].specular", pointLights[3].Specular);
 
-			// Setup spot light
-			spotLight.Position = camera.Position;
-			spotLight.Direction = camera.Front;
-			shader->setVec3("spotLight.position", spotLight.Position);
-			shader->setVec3("spotLight.direction", spotLight.Direction);
-			shader->setFloat("spotLight.cutOff", spotLight.CutOff);
-			shader->setFloat("spotLight.outerCutOff", spotLight.OuterCutOff);
+		// Setup spot light
+		spotLight.Position = camera.Position;
+		spotLight.Direction = camera.Front;
+		shader->setVec3("spotLight.position", spotLight.Position);
+		shader->setVec3("spotLight.direction", spotLight.Direction);
+		shader->setFloat("spotLight.cutOff", spotLight.CutOff);
+		shader->setFloat("spotLight.outerCutOff", spotLight.OuterCutOff);
 
-			shader->setVec3("spotLight.ambient", spotLight.Ambient);
-			shader->setVec3("spotLight.diffuse", spotLight.Diffuse);
-			shader->setVec3("spotLight.specular", spotLight.Specular);
-			shader->setFloat("spotLight.constant", spotLight.Constant);
-			shader->setFloat("spotLight.linear", spotLight.Linear);
-			shader->setFloat("spotLight.quadratic", spotLight.Quadratic);
-		}
+		shader->setVec3("spotLight.ambient", spotLight.Ambient);
+		shader->setVec3("spotLight.diffuse", spotLight.Diffuse);
+		shader->setVec3("spotLight.specular", spotLight.Specular);
+		shader->setFloat("spotLight.constant", spotLight.Constant);
+		shader->setFloat("spotLight.linear", spotLight.Linear);
+		shader->setFloat("spotLight.quadratic", spotLight.Quadratic);
 
 		// view, projection, model
 		projection = glm::perspective(camera.Zoom, width / (float)height, 0.1f, 100.0f);
@@ -574,8 +530,15 @@ int main() {
 #if USING_DIFFUSE_MAP
 		glBindTexture(GL_TEXTURE_2D, 0);
 #endif
+		// Sort Transparent objects
+		std::map<float, glm::vec3> sorted;
+		for (int i = 0; i < 5; i++)
+		{
+			float distance = glm::length2(camera.Position - transparentPositions[i]);
+			sorted[distance] = transparentPositions[i];
+		}
 
-		// Draw Vegetation
+		// Draw Transparent objects
 		Shader* transparentShader = ShaderManager::getInstance()->getShaderByType(SHADER_TYPE_VERTICE_TRANSPARENT_COLOR);
 		
 		transparentShader->Use();
@@ -586,14 +549,15 @@ int main() {
 		transparentShader->setInt("texture1", 0);
 
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, diffuseMap_grass);
+		glBindTexture(GL_TEXTURE_2D, diffuseMap_transparent);
 
 		glBindVertexArray(VAO_vegetation);
 
-		for (int i = 0; i < 5; i++)
+		for (std::map<float, glm::vec3>::reverse_iterator it = sorted.rbegin(); it != sorted.rend(); ++it)
 		{
 			model = glm::mat4();
-			model = glm::translate(model, vegetationPositions[i]);
+			model = glm::translate(model, it->second);
+			model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
 
 			transparentShader->setMat4("model", model);
 
