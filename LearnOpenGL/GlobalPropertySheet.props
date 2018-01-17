@@ -20,7 +20,7 @@
       <AdditionalDependencies>glew32.lib;glfw3.lib;zlibstatic.lib;assimp-vc140-mt.lib;opengl32.lib;SOIL_Debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>XCOPY "$(SolutionDir)"glew-2.0.0\bin\Release\Win32\*.DLL "$(TargetDir)" /D /K /Y</Command>
+      <Command>XCOPY "$(SolutionDir)glew-2.0.0\bin\Release\Win32\*.DLL" "$(TargetDir)" /D /K /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup />

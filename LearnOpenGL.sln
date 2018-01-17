@@ -15,6 +15,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LearnOpenGL-FaceCulling", "
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LearnOpenGL-FrameBuffer", "LearnOpenGL\LearnOpenGL-FrameBuffer.vcxproj", "{291989F6-4CC6-4B63-81F4-2340D9884984}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LearnOpenGL-Cubemaps", "LearnOpenGL\LearnOpenGL-Cubemaps.vcxproj", "{7B9E09E8-AED7-4ED4-BBC9-C9B5D9811C82}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -71,6 +73,14 @@ Global
 		{291989F6-4CC6-4B63-81F4-2340D9884984}.Release|x64.Build.0 = Release|x64
 		{291989F6-4CC6-4B63-81F4-2340D9884984}.Release|x86.ActiveCfg = Release|Win32
 		{291989F6-4CC6-4B63-81F4-2340D9884984}.Release|x86.Build.0 = Release|Win32
+		{7B9E09E8-AED7-4ED4-BBC9-C9B5D9811C82}.Debug|x64.ActiveCfg = Debug|x64
+		{7B9E09E8-AED7-4ED4-BBC9-C9B5D9811C82}.Debug|x64.Build.0 = Debug|x64
+		{7B9E09E8-AED7-4ED4-BBC9-C9B5D9811C82}.Debug|x86.ActiveCfg = Debug|Win32
+		{7B9E09E8-AED7-4ED4-BBC9-C9B5D9811C82}.Debug|x86.Build.0 = Debug|Win32
+		{7B9E09E8-AED7-4ED4-BBC9-C9B5D9811C82}.Release|x64.ActiveCfg = Release|x64
+		{7B9E09E8-AED7-4ED4-BBC9-C9B5D9811C82}.Release|x64.Build.0 = Release|x64
+		{7B9E09E8-AED7-4ED4-BBC9-C9B5D9811C82}.Release|x86.ActiveCfg = Release|Win32
+		{7B9E09E8-AED7-4ED4-BBC9-C9B5D9811C82}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
