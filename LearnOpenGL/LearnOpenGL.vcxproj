@@ -61,6 +61,10 @@
     <None Include="Shaders\SimpleVertexColorShader.vs" />
     <None Include="Shaders\SimpleVertexShader.vs" />
     <None Include="Shaders\SkyboxFrag.frag" />
+    <None Include="Shaders\SkyboxReflectionShader.frag" />
+    <None Include="Shaders\SkyboxReflectionShader.vs" />
+    <None Include="Shaders\SkyboxRefractionShader.frag" />
+    <None Include="Shaders\SkyboxRefractionShader.vs" />
     <None Include="Shaders\SkyboxVertex.vs" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

@@ -156,42 +156,6 @@ int main() {
 	ShaderManager::Init();
 
 	// 3D cube
-	GLfloat plane_vertices[] = {
-		// positions			// normals				// texture coords
-		-1.0f,  0.0f, -1.0f,	0.0f,  1.0f,  0.0f,		0.0f, 1.0f,
-		1.0f,  0.0f,  1.0f,		0.0f,  1.0f,  0.0f,		1.0f, 0.0f,
-		1.0f,  0.0f, -1.0f,		0.0f,  1.0f,  0.0f,		1.0f, 1.0f,
-
-		-1.0f,  0.0f,  1.0f,	0.0f,  1.0f,  0.0f,		0.0f, 0.0f,
-		1.0f,  0.0f,  1.0f,		0.0f,  1.0f,  0.0f,		1.0f, 0.0f,
-		-1.0f,  0.0f, -1.0f,	0.0f,  1.0f,  0.0f,		0.0f, 1.0f
-	};
-
-	GLuint VBO_plane;
-	glGenBuffers(1, &VBO_plane);
-
-	GLuint VAO_plane;
-	glGenVertexArrays(1, &VAO_plane);
-
-	glBindVertexArray(VAO_plane);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO_plane);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(plane_vertices), plane_vertices, GL_STATIC_DRAW);
-
-	// Position Attributes
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);
-	glEnableVertexAttribArray(0);
-
-	// Normal Attributes
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
-	glEnableVertexAttribArray(1);
-
-	// TexCoord attributes
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
-	glEnableVertexAttribArray(2);
-
-	glBindVertexArray(0);
-
-	// 3D cube
 	GLfloat cube_vertices[] = {
 		// positions			// normals				// texture coords
 		-0.5f, -0.5f, -0.5f,	0.0f, 0.0f, -1.0f,		0.0f, 0.0f,
@@ -256,8 +220,8 @@ int main() {
 	glEnableVertexAttribArray(1);
 
 	// TexCoord attributes
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
-	glEnableVertexAttribArray(2);
+	//glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
+	//glEnableVertexAttribArray(2);
 
 	glBindVertexArray(0);
 
@@ -384,31 +348,6 @@ int main() {
 	};
 
 	GLuint skyBoxMap = loadCubemap(faces);
-
-	// Setup light VAO
-	GLuint lightVAO;
-	glGenVertexArrays(1, &lightVAO);
-
-	glBindVertexArray(lightVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO_plane);
-
-	// Position attributes
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);
-	glEnableVertexAttribArray(0);
-	glBindVertexArray(0);
-
-	glm::vec3 cubePositions[] = {
-		glm::vec3(0.0f,  0.5f,  2.0f),
-		glm::vec3(1.0f,  0.5, 0.0f)
-	};
-
-	glm::vec3 transparentPositions[5] = {
-		glm::vec3(-1.5f,  0.5f, -0.48f),
-		glm::vec3(1.5f,  0.5f,  0.51f),
-		glm::vec3(0.0f,  0.5f,  0.7f),
-		glm::vec3(-0.3f,  0.5f, -2.3f),
-		glm::vec3(0.5f,  0.5f, -0.6f)
-	};
 	
 	glm::mat4 projection;
 
@@ -429,6 +368,12 @@ int main() {
 
 	// Material
 	Material mat(diffuseMap, -1, 32.0F);
+
+	// Model Loading
+	Model ourModel("Resources/nanosuit/nanosuit.obj");
+
+	int modeIndex = 0; // 0 reflection, 1 refraction
+	int modelIndex = 0; // 0 cube, 1 ourModel
 
 	// set mouse callbacks
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -455,6 +400,24 @@ int main() {
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
+		if (keys['R'])
+		{
+			modeIndex = 0;
+		}
+		else if (keys['T'])
+		{
+			modeIndex = 1;
+		}
+
+		if (keys['1'])
+		{
+			modelIndex = 0;
+		}
+		else if (keys['2'])
+		{
+			modelIndex = 1;
+		}
+
 		do_movement();
 
 		// Rendering commands here
@@ -465,108 +428,47 @@ int main() {
 		projection = glm::perspective(camera.Zoom, width / (float)height, 0.1f, 100.0f);
 		glm::mat4 view = camera.GetViewMatrix();
 
+
 		// Draw 3D
-		Shader* shader = ShaderManager::getInstance()->getShaderByType(SHADER_TYPE_VERTICE_LIGHT_PHONG);
-		shader->Use();
-
-
-		// position of camera
-		shader->setVec3("viewPos", camera.Position);
-
-		// Setting up Material
-		shader->setInt("material.diffuse", 0);
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, diffuseMap);
-
-		shader->setFloat("material.shininess", mat.Shininess);
-
-		// Setting up Directional Light
-		shader->setVec3("dirLight.ambient", dirLight.Ambient);
-		shader->setVec3("dirLight.diffuse", dirLight.Diffuse);
-		shader->setVec3("dirLight.specular", dirLight.Specular);
-		shader->setVec3("dirLight.direction", dirLight.Direction);
-
-		// Setting up Point Lights
-		shader->setVec3("pointLights[0].position", pointLights[0].Position);
-		shader->setFloat("pointLights[0].constant", pointLights[0].Constant);
-		shader->setFloat("pointLights[0].linear", pointLights[0].Linear);
-		shader->setFloat("pointLights[0].quadratic", pointLights[0].Quadratic);
-		shader->setVec3("pointLights[0].ambient", pointLights[0].Ambient);
-		shader->setVec3("pointLights[0].diffuse", pointLights[0].Diffuse);
-		shader->setVec3("pointLights[0].specular", pointLights[0].Specular);
-
-		shader->setVec3("pointLights[1].position", pointLights[1].Position);
-		shader->setFloat("pointLights[1].constant", pointLights[1].Constant);
-		shader->setFloat("pointLights[1].linear", pointLights[1].Linear);
-		shader->setFloat("pointLights[1].quadratic", pointLights[1].Quadratic);
-		shader->setVec3("pointLights[1].ambient", pointLights[1].Ambient);
-		shader->setVec3("pointLights[1].diffuse", pointLights[1].Diffuse);
-		shader->setVec3("pointLights[1].specular", pointLights[1].Specular);
-
-		shader->setVec3("pointLights[2].position", pointLights[2].Position);
-		shader->setFloat("pointLights[2].constant", pointLights[2].Constant);
-		shader->setFloat("pointLights[2].linear", pointLights[2].Linear);
-		shader->setFloat("pointLights[2].quadratic", pointLights[2].Quadratic);
-		shader->setVec3("pointLights[2].ambient", pointLights[2].Ambient);
-		shader->setVec3("pointLights[2].diffuse", pointLights[2].Diffuse);
-		shader->setVec3("pointLights[2].specular", pointLights[2].Specular);
-
-		shader->setVec3("pointLights[3].position", pointLights[3].Position);
-		shader->setFloat("pointLights[3].constant", pointLights[3].Constant);
-		shader->setFloat("pointLights[3].linear", pointLights[3].Linear);
-		shader->setFloat("pointLights[3].quadratic", pointLights[3].Quadratic);
-		shader->setVec3("pointLights[3].ambient", pointLights[3].Ambient);
-		shader->setVec3("pointLights[3].diffuse", pointLights[3].Diffuse);
-		shader->setVec3("pointLights[3].specular", pointLights[3].Specular);
-
-		// Setup spot light
-		spotLight.Position = camera.Position;
-		spotLight.Direction = camera.Front;
-		shader->setVec3("spotLight.position", spotLight.Position);
-		shader->setVec3("spotLight.direction", spotLight.Direction);
-		shader->setFloat("spotLight.cutOff", spotLight.CutOff);
-		shader->setFloat("spotLight.outerCutOff", spotLight.OuterCutOff);
-
-		shader->setVec3("spotLight.ambient", spotLight.Ambient);
-		shader->setVec3("spotLight.diffuse", spotLight.Diffuse);
-		shader->setVec3("spotLight.specular", spotLight.Specular);
-		shader->setFloat("spotLight.constant", spotLight.Constant);
-		shader->setFloat("spotLight.linear", spotLight.Linear);
-		shader->setFloat("spotLight.quadratic", spotLight.Quadratic);
-
-		
-		shader->setMat4("view", view);
-		shader->setMat4("projection", projection);
-
-		glBindVertexArray(VAO_plane);
-
-		glm::mat4 model;
-		model = glm::scale(model, glm::vec3(5.0f));
-
-		shader->setMat4("model", model);
-		
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-		
-		glBindVertexArray(VAO_cube);
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, diffuseMap_cube);
-
-		for (int i = 0; i < 2; i++)
+		Shader * shader;
+		if (modeIndex == 1)
 		{
-			glm::mat4 model_cube;
-			model_cube = glm::translate(model_cube, cubePositions[i]);
-			shader->setMat4("model", model_cube);
-
-			glDrawArrays(GL_TRIANGLES, 0, 36);
+			shader = ShaderManager::getInstance()->getShaderByType(SHADER_TYPE_SKYBOX_REFRACTION);
+		}
+		else
+		{
+			shader = ShaderManager::getInstance()->getShaderByType(SHADER_TYPE_SKYBOX_REFLECTION);
 		}
 
-		glBindVertexArray(0);
+		shader->Use();
 
-#if USING_DIFFUSE_MAP
-		glBindTexture(GL_TEXTURE_2D, 0);
-#endif
+		// position of camera
+		shader->setVec3("cameraPos", camera.Position);
+
+		shader->setMat4("view", view);
+		shader->setMat4("projection", projection);
+		
+		glm::mat4 model;
+		shader->setMat4("model", model);
+		
+		glBindTexture(GL_TEXTURE_CUBE_MAP, skyBoxMap);
+
+		if (modelIndex == 1)
+		{
+			ourModel.Draw(shader);
+		}
+		else
+		{
+			glBindVertexArray(VAO_cube);
+
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+
+			glBindVertexArray(0);
+		}
+
+		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+
+
 
 		// Draw Skybox at last
 		{
@@ -580,6 +482,7 @@ int main() {
 			glBindTexture(GL_TEXTURE_CUBE_MAP, skyBoxMap);
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 			glDepthFunc(GL_LESS);
+			glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 		}
 
 		// Swap the buffers
@@ -587,12 +490,11 @@ int main() {
 	}
 
 	// Deleting Buffer vertex array, vertex buffer and Element Buffer
-	glDeleteVertexArrays(1, &VAO_plane);
-	glDeleteBuffers(1, &VBO_plane); 
 	glDeleteVertexArrays(1, &VAO_cube);
 	glDeleteBuffers(1, &VBO_cube); 
 	glDeleteVertexArrays(1, &skyBox_VAO);
 	glDeleteBuffers(1, &skyBox_VBO);
+	glDeleteTextures(1, &skyBoxMap);
 
 	ShaderManager::Destroy();
 

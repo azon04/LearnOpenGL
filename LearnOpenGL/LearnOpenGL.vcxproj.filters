@@ -142,5 +142,17 @@
     <None Include="Shaders\SkyboxFrag.frag">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="Shaders\SkyboxReflectionShader.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\SkyboxReflectionShader.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\SkyboxRefractionShader.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\SkyboxRefractionShader.frag">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

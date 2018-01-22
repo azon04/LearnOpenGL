@@ -33,6 +33,8 @@ void ShaderManager::Init()
 	Shader* verticesSingleColor = new Shader("Shaders/Simple3DShader.vs", "Shaders/ShaderSingleColor.frag");
 	Shader* verticesTransparentColor = new Shader("Shaders/Simple3DShader.vs", "Shaders/SimpleTransparentTextureShader.frag");
 	Shader* skyboxShader = new Shader("Shaders/SkyboxVertex.vs", "Shaders/SkyboxFrag.frag");
+	Shader* skyboxReflectionShader = new Shader("Shaders/SkyboxReflectionShader.vs", "Shaders/SkyboxReflectionShader.frag");
+	Shader* skyboxRefractionShader = new Shader("Shaders/SkyboxRefractionShader.vs", "Shaders/SkyboxRefractionShader.frag");
 
 	m_instance->m_shaders.push_back(shader);
 	m_instance->m_shaders.push_back(shader2);
@@ -46,6 +48,8 @@ void ShaderManager::Init()
 	m_instance->m_shaders.push_back(verticesSingleColor);
 	m_instance->m_shaders.push_back(verticesTransparentColor);
 	m_instance->m_shaders.push_back(skyboxShader);
+	m_instance->m_shaders.push_back(skyboxReflectionShader);
+	m_instance->m_shaders.push_back(skyboxRefractionShader);
 }
 
 void ShaderManager::Destroy()
