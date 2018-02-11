@@ -154,5 +154,8 @@
     <None Include="Shaders\SkyboxRefractionShader.frag">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="Shaders\ExplodingShader.gs">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

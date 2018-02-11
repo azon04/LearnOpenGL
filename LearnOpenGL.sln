@@ -17,6 +17,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LearnOpenGL-FrameBuffer", "
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LearnOpenGL-Cubemaps", "LearnOpenGL\LearnOpenGL-Cubemaps.vcxproj", "{7B9E09E8-AED7-4ED4-BBC9-C9B5D9811C82}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LearnOpenGL-GeometryHouses", "LearnOpenGL\LearnOpenGL-GeometryHouses.vcxproj", "{CB3F92E2-6D40-4789-91F3-3B3DE028EEA7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -81,6 +83,14 @@ Global
 		{7B9E09E8-AED7-4ED4-BBC9-C9B5D9811C82}.Release|x64.Build.0 = Release|x64
 		{7B9E09E8-AED7-4ED4-BBC9-C9B5D9811C82}.Release|x86.ActiveCfg = Release|Win32
 		{7B9E09E8-AED7-4ED4-BBC9-C9B5D9811C82}.Release|x86.Build.0 = Release|Win32
+		{CB3F92E2-6D40-4789-91F3-3B3DE028EEA7}.Debug|x64.ActiveCfg = Debug|x64
+		{CB3F92E2-6D40-4789-91F3-3B3DE028EEA7}.Debug|x64.Build.0 = Debug|x64
+		{CB3F92E2-6D40-4789-91F3-3B3DE028EEA7}.Debug|x86.ActiveCfg = Debug|Win32
+		{CB3F92E2-6D40-4789-91F3-3B3DE028EEA7}.Debug|x86.Build.0 = Debug|Win32
+		{CB3F92E2-6D40-4789-91F3-3B3DE028EEA7}.Release|x64.ActiveCfg = Release|x64
+		{CB3F92E2-6D40-4789-91F3-3B3DE028EEA7}.Release|x64.Build.0 = Release|x64
+		{CB3F92E2-6D40-4789-91F3-3B3DE028EEA7}.Release|x86.ActiveCfg = Release|Win32
+		{CB3F92E2-6D40-4789-91F3-3B3DE028EEA7}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

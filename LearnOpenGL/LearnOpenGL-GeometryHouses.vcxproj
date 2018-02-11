@@ -18,62 +18,11 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Common\Camera.cpp" />
-    <ClCompile Include="Common\Mesh.cpp" />
-    <ClCompile Include="Common\Model.cpp" />
-    <ClCompile Include="Common\PointLight.cpp" />
-    <ClCompile Include="Common\Shader.cpp" />
-    <ClCompile Include="Common\ShaderManager.cpp" />
-    <ClCompile Include="Common\SpotLight.cpp" />
-    <ClCompile Include="LearnOpenGL-Basic\Main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Common\Camera.h" />
-    <ClInclude Include="Common\DirLight.h" />
-    <ClInclude Include="Common\Light.h" />
-    <ClInclude Include="Common\Material.h" />
-    <ClInclude Include="Common\Mesh.h" />
-    <ClInclude Include="Common\Model.h" />
-    <ClInclude Include="Common\PointLight.h" />
-    <ClInclude Include="Common\Shader.h" />
-    <ClInclude Include="Common\ShaderManager.h" />
-    <ClInclude Include="Common\SpotLight.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Shaders\BaseScreenShader.frag" />
-    <None Include="Shaders\ExplodingShader.gs" />
-    <None Include="Shaders\GrayscaleScreenShader.frag" />
-    <None Include="Shaders\InversionScreenShader.frag" />
-    <None Include="Shaders\ScreenShader.vs" />
-    <None Include="Shaders\ShaderSingleColor.frag" />
-    <None Include="Shaders\SharpenKernelScreenShader.frag" />
-    <None Include="Shaders\Simple3DShader.vs" />
-    <None Include="Shaders\Simple3DShaderLightColor.vs" />
-    <None Include="Shaders\Simple3DShaderLightTut.vs" />
-    <None Include="Shaders\SimpleFragmentLightRep.frag" />
-    <None Include="Shaders\SimpleFragmentShader.frag" />
-    <None Include="Shaders\SimpleFragmentShader2.frag" />
-    <None Include="Shaders\SimpleShaderFragDepth.frag" />
-    <None Include="Shaders\SimpleShaderLightColor.frag" />
-    <None Include="Shaders\SimpleTextureShader.frag" />
-    <None Include="Shaders\SimpleTextureShader.vs" />
-    <None Include="Shaders\SimpleTransparentTextureShader.frag" />
-    <None Include="Shaders\SimpleVertexColorShader.vs" />
-    <None Include="Shaders\SimpleVertexShader.vs" />
-    <None Include="Shaders\SkyboxFrag.frag" />
-    <None Include="Shaders\SkyboxReflectionShader.frag" />
-    <None Include="Shaders\SkyboxReflectionShader.vs" />
-    <None Include="Shaders\SkyboxRefractionShader.frag" />
-    <None Include="Shaders\SkyboxRefractionShader.vs" />
-    <None Include="Shaders\SkyboxVertex.vs" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{14D77E61-C665-4F08-A687-75863B724F66}</ProjectGuid>
+    <ProjectGuid>{CB3F92E2-6D40-4789-91F3-3B3DE028EEA7}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>LearnOpenGL</RootNamespace>
+    <RootNamespace>LearnOpenGLBlending</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
-    <ProjectName>LearnOpenGL-Basic</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -109,15 +58,19 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="GlobalPropertySheet.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="GlobalPropertySheet.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="GlobalPropertySheet.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="GlobalPropertySheet.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -139,18 +92,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)\assimp-3.3.1\include;$(SolutionDir)\glew-2.0.0\include;$(SolutionDir)\soil\src;$(SolutionDir)\includes;Common;$(SolutionDir)\glfw\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)assimp-3.3.1\lib\Release\Win32;$(SolutionDir)glew-2.0.0\lib\Release\Win32;$(SolutionDir)soil\Win32;$(SolutionDir)glfw\lib-vc2015;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glew32.lib;glfw3.lib;zlibstatic.lib;assimp-vc140-mt.lib;opengl32.lib;SOIL_Debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
-    <PostBuildEvent>
-      <Command>XCOPY "$(SolutionDir)"glew-2.0.0\bin\Release\Win32\*.DLL "$(TargetDir)" /D /K /Y</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -159,6 +106,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -174,6 +122,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -191,6 +140,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -199,6 +149,33 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="Common\Camera.cpp" />
+    <ClCompile Include="Common\Mesh.cpp" />
+    <ClCompile Include="Common\Model.cpp" />
+    <ClCompile Include="Common\PointLight.cpp" />
+    <ClCompile Include="Common\Shader.cpp" />
+    <ClCompile Include="Common\ShaderManager.cpp" />
+    <ClCompile Include="Common\SpotLight.cpp" />
+    <ClCompile Include="LearnOpenGL-GeometryHouses\Main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Common\Camera.h" />
+    <ClInclude Include="Common\DirLight.h" />
+    <ClInclude Include="Common\Light.h" />
+    <ClInclude Include="Common\Material.h" />
+    <ClInclude Include="Common\Mesh.h" />
+    <ClInclude Include="Common\Model.h" />
+    <ClInclude Include="Common\PointLight.h" />
+    <ClInclude Include="Common\Shader.h" />
+    <ClInclude Include="Common\ShaderManager.h" />
+    <ClInclude Include="Common\SpotLight.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\TestGeometry\GeometryHouseFragment.frag" />
+    <None Include="Shaders\TestGeometry\GeometryHouseGeoShader.gs" />
+    <None Include="Shaders\TestGeometry\GeometryHouseVertex.vs" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

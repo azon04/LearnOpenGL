@@ -19,7 +19,7 @@ public:
 	GLuint Program;
 
 	// Constructor reads and builds the shader
-	Shader(const GLchar* vertexPath, const GLchar* fragmentPath);
+	Shader(const GLchar* vertexPath, const GLchar* fragmentPath, const GLchar* geometryPath = nullptr);
 
 	virtual ~Shader();
 	
