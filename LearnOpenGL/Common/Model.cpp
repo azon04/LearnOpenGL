@@ -17,6 +17,12 @@ void Model::Draw(Shader* shader)
 		meshes[i].Draw(shader);
 }
 
+void Model::Release()
+{
+	for (unsigned int i = 0; i < meshes.size(); i++)
+		meshes[i].Release();
+}
+
 void Model::loadModel(std::string path)
 {
 	Assimp::Importer importer;

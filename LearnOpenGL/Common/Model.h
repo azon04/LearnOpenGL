@@ -18,6 +18,7 @@ public:
 	Model(char *path);
 	void Draw(Shader* shader);
 
+	void Release();
 private:
 	void loadModel(std::string path);
 	void processNode(aiNode* node, const aiScene* scene);

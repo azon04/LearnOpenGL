@@ -157,5 +157,8 @@
     <None Include="Shaders\ExplodingShader.gs">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="Shaders\ExplodingShader.vs">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
