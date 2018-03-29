@@ -35,6 +35,7 @@ void ShaderManager::Init()
 	Shader* skyboxShader = new Shader("Shaders/SkyboxVertex.vs", "Shaders/SkyboxFrag.frag");
 	Shader* skyboxReflectionShader = new Shader("Shaders/SkyboxReflectionShader.vs", "Shaders/SkyboxReflectionShader.frag");
 	Shader* skyboxRefractionShader = new Shader("Shaders/SkyboxRefractionShader.vs", "Shaders/SkyboxRefractionShader.frag");
+	Shader* _3dUnlitColorShader = new Shader("Shaders/Simple3DShaderLightTut.vs", "Shaders/SimpleShaderUnlitColor.frag");
 
 	m_instance->m_shaders.push_back(shader);
 	m_instance->m_shaders.push_back(shader2);
@@ -50,6 +51,7 @@ void ShaderManager::Init()
 	m_instance->m_shaders.push_back(skyboxShader);
 	m_instance->m_shaders.push_back(skyboxReflectionShader);
 	m_instance->m_shaders.push_back(skyboxRefractionShader);
+	m_instance->m_shaders.push_back(_3dUnlitColorShader);
 }
 
 void ShaderManager::Destroy()

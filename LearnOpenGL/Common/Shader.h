@@ -26,6 +26,7 @@ public:
 	GLint getUniformPosition(const char* _varName);
 
 	void setVec3(const char* _varName, glm::vec3 _value);
+	void setVec2(const char* _varName, glm::vec2 _value);
 	void setFloat(const char* _varName, float _value);
 	void setInt(const char* _varName, int _value);
 	void setMat4(const char* _varName, glm::mat4 _value);
