@@ -57,6 +57,7 @@
     <None Include="Shaders\SimpleFragmentShader2.frag" />
     <None Include="Shaders\SimpleShaderFragDepth.frag" />
     <None Include="Shaders\SimpleShaderLightColor.frag" />
+    <None Include="Shaders\SimpleShaderUnlitColor.frag" />
     <None Include="Shaders\SimpleTextureShader.frag" />
     <None Include="Shaders\SimpleTextureShader.vs" />
     <None Include="Shaders\SimpleTransparentTextureShader.frag" />

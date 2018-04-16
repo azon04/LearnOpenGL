@@ -8,6 +8,7 @@
 #include <iostream>
 #include <fstream>
 #include <map>
+#include <vector>
 
 #include "ShaderManager.h"
 #include "Shader.h"
@@ -28,6 +29,14 @@
 #define GLM_ENABLE_EXPERIMENTAL
 
 #include "glm/gtx/norm.hpp"
+
+// TODO for NVIDIA Optimus :  This enable the program to use NVIDIA instead of integrated Intel graphics
+#if WIN32 || WIN64
+extern "C" {
+	#include <windows.h>
+	_declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+}
+#endif
 
 // Global Variables
 Camera camera(0.0f, 2.0f, 4.0f, 0.0f, 1.0f, 0.0f);
@@ -123,14 +132,72 @@ int main() {
 
 	// Setup Shaders
 	ShaderManager::Init();
-	//Shader shader("Shaders/AsteroidInstancing/SimpleInstancing.vs", "Shaders/SimpleFragmentShader.frag");
+	Shader instanceShader("Shaders/AsteroidInstancing/AsteroidInstancing.vs", "Shaders/SimpleShaderUnlitColor.frag");
 
 	// Model Load
 	Model planetModel("Resources/planet/planet.obj");
-	Model rockModel("Resource/rock/rock.obj");
+	Model rockModel("Resources/rock/rock.obj");
 	
-	// Setup Lights
+	// Setup Rock/Asteroids
+	unsigned int amount = 100000;
+	std::vector<glm::mat4> modelMatrices;
+	srand(glfwGetTime());
+	float radius = 100.0f;
+	float offset = 25.0f;
+	for (unsigned int i = 0; i < amount; i++)
+	{
+		glm::mat4 model;
+		// 1. translation: displace along circle with 'radius' in range [-offset, offset]
+		float angle = (float)i / (float)amount * 360.0f;
+		float displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
+		float x = sin(angle) * radius + displacement;
+		displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
+		float y = displacement * 0.4f; // keep the height of field smaller compared to with of x and z
+		displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
+		float z = cos(angle) * radius + displacement;
+		model = glm::translate(model, glm::vec3(x, y, z));
+
+		// 2. Scale: Scale between 0.05f and 0.25f
+		float scale = (rand() % 20) / 100.0f + 0.05;
+		model = glm::scale(model, glm::vec3(scale));
+
+		// 3 rotation: add random rotation around a (semi)randomly picked rotation axis vector
+		float rotAngle = (rand() % 360);
+		model = glm::rotate(model, rotAngle, glm::vec3(0.4f, 0.6f, 0.8f));
+
+		modelMatrices.push_back(model);
+	}
 	
+	// Vertex Buffer Object for rock instancing
+	unsigned int instanceBuffer;
+	glGenBuffers(1, &instanceBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, instanceBuffer);
+	glBufferData(GL_ARRAY_BUFFER, amount * sizeof(glm::mat4), &modelMatrices[0], GL_STATIC_DRAW);
+
+	for (unsigned int i = 0; i < rockModel.meshes.size(); i++)
+	{
+		unsigned int VAO = rockModel.meshes[i].VAO;
+		glBindVertexArray(VAO);
+
+		// vertex Attributes
+		GLsizei vec4size = sizeof(glm::vec4);
+		glEnableVertexAttribArray(3);
+		glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, 4 * vec4size, (void*)0);
+		glEnableVertexAttribArray(4);
+		glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, 4 * vec4size, (void*) vec4size);
+		glEnableVertexAttribArray(5);
+		glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, 4 * vec4size, (void*)(2 * vec4size));
+		glEnableVertexAttribArray(6);
+		glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, 4 * vec4size, (void*)(3 * vec4size));
+
+		glVertexAttribDivisor(3, 1);
+		glVertexAttribDivisor(4, 1);
+		glVertexAttribDivisor(5, 1);
+		glVertexAttribDivisor(6, 1);
+
+		glBindVertexArray(0);
+	}
+
 	// set mouse callbacks
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetScrollCallback(window, scroll_callback);
@@ -160,23 +227,38 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// Setting up Projection View Model
-		glm::mat4 projection;
+		glm::mat4 projection = glm::perspective(camera.Zoom, width / (float)height, 0.1f, 1000.0f);
 		glm::mat4 view = camera.GetViewMatrix();
+		glm::mat4 model;
 
 		// Draw
 		Shader* shader = ShaderManager::getInstance()->getShaderByType(SHADER_TYPE_VERTICE_UNLIT_3D);
-		shader->Use();
-		glBindVertexArray(VAO);
-		glDrawArraysInstanced(GL_TRIANGLES, 0, 6, 100);
-		glBindVertexArray(0);
 		
+		// Draw planet
+		shader->Use();
+		shader->setMat4("model", model);
+		shader->setMat4("view", view);
+		shader->setMat4("projection", projection);
+		planetModel.Draw(shader);
+		
+
+		// Draw rocks
+		instanceShader.Use();
+		instanceShader.setMat4("view", view);
+		instanceShader.setMat4("projection", projection);
+		instanceShader.setInt("material.diffuse", 0);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, rockModel.textures_loaded[0].id); // note: bind the texture manually, since we draw it manually not from Model class
+		for (unsigned int i = 0; i < rockModel.meshes.size(); i++)
+		{
+			glBindVertexArray(rockModel.meshes[i].VAO);
+			glDrawElementsInstanced(GL_TRIANGLES, rockModel.meshes[i].indices.size(), GL_UNSIGNED_INT, 0, amount);
+			glBindVertexArray(0);
+		}
+
 		// Swap the buffers
 		glfwSwapBuffers(window);
 	}
-
-	// Deleting All Buffers
-	glDeleteVertexArrays(1, &VAO);
-	glDeleteBuffers(1, &VBO);
 
 	ShaderManager::Destroy();
 

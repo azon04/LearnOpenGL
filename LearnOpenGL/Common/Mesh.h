@@ -40,7 +40,7 @@ public:
 	std::vector<unsigned int> indices;
 	std::vector<Texture> textures;
 
-private:
+public:
 	unsigned int VAO, VBO, EBO;
 
 

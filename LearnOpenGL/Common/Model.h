@@ -26,11 +26,13 @@ private:
 	std::vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
 	unsigned int TextureFromFile(std::string file, std::string directory);
 
+public:
+	std::vector<Mesh> meshes;
+	std::vector<Texture> textures_loaded;
+
 private:
 	/* Model Data */
-	std::vector<Mesh> meshes;
 	std::string directory;
-	std::vector<Texture> textures_loaded;
 };
 
 #endif

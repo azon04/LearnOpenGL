@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{9C45DA67-11CE-4245-817F-597FB3AB9F89}</ProjectGuid>
+    <ProjectGuid>{04D0653B-DFBF-4DEA-B3BB-12E47224EAE7}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>LearnOpenGLAsteroidInstancing</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>

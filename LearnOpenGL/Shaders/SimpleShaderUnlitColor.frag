@@ -91,5 +91,5 @@ uniform Material material;
 
 void main()
 {
-	color = vec4(texture(material.diffuse, TexCoords), 1.0);
+	color = vec4(vec3(texture(material.diffuse, TexCoords)), 1.0);
 }

@@ -1,14 +1,19 @@
 // shadertype=glsl
 #version 330 core
-layout (location = 0) in vec2 aPos;
-layout (location = 1) in vec3 color;
-layout (location = 2) in vec2 offset;
+layout (location = 0) in vec3 aPos;
+layout (location = 1) in vec3 normal;
+layout (location = 2) in vec2 texCoords;
+layout (location = 3) in mat4 instanceMatrix; // this takes place as 4 vec4
 
-out vec4 vertexColor;
+uniform mat4 view;
+uniform mat4 projection;
+
+out vec3 FragPos;
+out vec3 Normal;
+out vec2 TexCoords;
 
 void main()
 {
-	vec2 pos = aPos * (gl_InstanceID / 100.0);
-	gl_Position = vec4(pos + offset, 0.0, 1.0);
-	vertexColor = vec4(color, 1.0);
+	gl_Position = projection * view * instanceMatrix * vec4(aPos, 1.0f);
+	TexCoords = texCoords;
 }
