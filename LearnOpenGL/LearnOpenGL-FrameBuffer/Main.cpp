@@ -441,7 +441,7 @@ int main() {
 			screenEffectMode = 3;
 		}
 
-		// Draw to off-screen buffer ( First past )
+		// Draw to off-screen buffer ( First pass )
 		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 		glEnable(GL_DEPTH_TEST);
 
