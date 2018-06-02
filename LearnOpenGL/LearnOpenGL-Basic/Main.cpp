@@ -343,6 +343,7 @@ int main() {
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, diffuseMap);
 
+		_3dShader->setBool("material.useSpecular", true);
 		_3dShader->setInt("material.specular", 1);
 
 		glActiveTexture(GL_TEXTURE1);
@@ -358,6 +359,10 @@ int main() {
 #endif
 		_3dShader->setFloat("material.shininess", mat.Shininess);
 		
+		_3dShader->setBool("useDirLight", true);
+		_3dShader->setBool("useSpotLight", true);
+		_3dShader->setInt("pointLightCount", 4);
+
 		// Setting up Directional Light
 		_3dShader->setVec3("dirLight.ambient", dirLight.Ambient);
 		_3dShader->setVec3("dirLight.diffuse", dirLight.Diffuse);

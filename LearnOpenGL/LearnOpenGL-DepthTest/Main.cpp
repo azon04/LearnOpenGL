@@ -421,12 +421,14 @@ int main() {
 			shader->setFloat("material.shininess", mat.Shininess);
 
 			// Setting up Directional Light
+			shader->setBool("useDirLight", true);
 			shader->setVec3("dirLight.ambient", dirLight.Ambient);
 			shader->setVec3("dirLight.diffuse", dirLight.Diffuse);
 			shader->setVec3("dirLight.specular", dirLight.Specular);
 			shader->setVec3("dirLight.direction", dirLight.Direction);
 
 			// Setting up Point Lights
+			shader->setInt("pointLightCount", 4);
 			shader->setVec3("pointLights[0].position", pointLights[0].Position);
 			shader->setFloat("pointLights[0].constant", pointLights[0].Constant);
 			shader->setFloat("pointLights[0].linear", pointLights[0].Linear);
@@ -462,6 +464,7 @@ int main() {
 			// Setup spot light
 			spotLight.Position = camera.Position;
 			spotLight.Direction = camera.Front;
+			shader->setBool("useSpotLight", true);
 			shader->setVec3("spotLight.position", spotLight.Position);
 			shader->setVec3("spotLight.direction", spotLight.Direction);
 			shader->setFloat("spotLight.cutOff", spotLight.CutOff);

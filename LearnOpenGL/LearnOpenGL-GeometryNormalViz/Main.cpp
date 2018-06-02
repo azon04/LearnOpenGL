@@ -178,6 +178,10 @@ int main() {
 		
 		shader.setFloat("material.shininess", 32.0F);
 
+		shader.setBool("useDirLight", true);
+		shader.setBool("useSpotLight", true);
+		shader.setInt("pointLightCount", 4);
+
 		// Setting up Directional Light
 		shader.setVec3("dirLight.ambient", dirLight.Ambient);
 		shader.setVec3("dirLight.diffuse", dirLight.Diffuse);

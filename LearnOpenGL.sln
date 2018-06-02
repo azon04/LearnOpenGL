@@ -31,6 +31,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LearnOpenGL-MSAA", "LearnOp
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LearnOpenGL-MSAAOffscreen", "LearnOpenGL\LearnOpenGL-MSAAOffscreen.vcxproj", "{1B4C6935-E1DD-478F-B044-26286653B9C9}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LearnOpenGL-BlinnPhong", "LearnOpenGL\LearnOpenGL-BlinnPhong.vcxproj", "{E171A027-F94F-4D64-8BB3-8A02CFA1B252}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -151,6 +153,14 @@ Global
 		{1B4C6935-E1DD-478F-B044-26286653B9C9}.Release|x64.Build.0 = Release|x64
 		{1B4C6935-E1DD-478F-B044-26286653B9C9}.Release|x86.ActiveCfg = Release|Win32
 		{1B4C6935-E1DD-478F-B044-26286653B9C9}.Release|x86.Build.0 = Release|Win32
+		{E171A027-F94F-4D64-8BB3-8A02CFA1B252}.Debug|x64.ActiveCfg = Debug|x64
+		{E171A027-F94F-4D64-8BB3-8A02CFA1B252}.Debug|x64.Build.0 = Debug|x64
+		{E171A027-F94F-4D64-8BB3-8A02CFA1B252}.Debug|x86.ActiveCfg = Debug|Win32
+		{E171A027-F94F-4D64-8BB3-8A02CFA1B252}.Debug|x86.Build.0 = Debug|Win32
+		{E171A027-F94F-4D64-8BB3-8A02CFA1B252}.Release|x64.ActiveCfg = Release|x64
+		{E171A027-F94F-4D64-8BB3-8A02CFA1B252}.Release|x64.Build.0 = Release|x64
+		{E171A027-F94F-4D64-8BB3-8A02CFA1B252}.Release|x86.ActiveCfg = Release|Win32
+		{E171A027-F94F-4D64-8BB3-8A02CFA1B252}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

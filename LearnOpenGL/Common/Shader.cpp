@@ -157,6 +157,11 @@ void Shader::setMat4(const char* _varName, glm::mat4 _value)
 	glUniformMatrix4fv(getUniformPosition(_varName), 1, GL_FALSE, glm::value_ptr(_value));
 }
 
+void Shader::setBool(const char* _varName, bool _value)
+{
+	glUniform1i(getUniformPosition(_varName), _value);
+}
+
 void Shader::Use()
 {
 	glUseProgram(this->Program);
