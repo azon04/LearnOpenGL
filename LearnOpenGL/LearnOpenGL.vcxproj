@@ -55,13 +55,11 @@
     <None Include="Shaders\Simple3DShader.vs" />
     <None Include="Shaders\Simple3DShaderLightColor.vs" />
     <None Include="Shaders\Simple3DShaderLightTut.vs" />
-    <None Include="Shaders\Simple3DShaderLightTutShadow.vs" />
     <None Include="Shaders\SimpleFragmentLightRep.frag" />
     <None Include="Shaders\SimpleFragmentShader.frag" />
     <None Include="Shaders\SimpleFragmentShader2.frag" />
     <None Include="Shaders\SimpleShaderFragDepth.frag" />
     <None Include="Shaders\SimpleShaderLightColor.frag" />
-    <None Include="Shaders\SimpleShaderLightColorShadow.frag" />
     <None Include="Shaders\SimpleShaderUnlitColor.frag" />
     <None Include="Shaders\SimpleTextureShader.frag" />
     <None Include="Shaders\SimpleTextureShader.vs" />

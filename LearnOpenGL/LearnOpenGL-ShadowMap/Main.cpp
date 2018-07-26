@@ -1,4 +1,3 @@
-
 // GLEW
 #include <GL/glew.h>
 
@@ -6,18 +5,11 @@
 #include <GLFW/glfw3.h>
 
 #include <iostream>
-#include <fstream>
-#include <map>
 
-#include "ShaderManager.h"
 #include "Shader.h"
 #include "Camera.h"
 #include "Material.h"
-#include "Light.h"
 #include "DirLight.h"
-#include "PointLight.h"
-#include "SpotLight.h"
-#include "Model.h"
 
 #include "SOIL.h"
 
@@ -43,11 +35,26 @@ GLfloat lastFrame = 0.0f;	// Time of the last frame
 
 int width, height;
 
+// Resources
+GLuint VAO_plane;
+GLuint VAO_cube;
+GLuint diffuseMap_cube;
+
+const int cubeCount = 3;
+glm::vec3 cubePositions[cubeCount] = 
+{
+	glm::vec3(0.0f,  0.5f,  1.0f),
+	glm::vec3(1.0f,  1.5f, 0.0f),
+	glm::vec3(-1.0f,  2.0f, 2.0f)
+};
+
 // input callback function
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode) {
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode) 
+{
 	// When user presses the escape key, we set the WindowsShouldClose property to true
 	// closing the application
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+	{
 		glfwSetWindowShouldClose(window, GL_TRUE);
 	}
 
@@ -57,28 +64,31 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		keys[key] = false;
 }
 
-void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
+void mouse_callback(GLFWwindow* window, double xpos, double ypos) 
+{
 	static bool firstMouse = true;
-	if (firstMouse) {
+	if (firstMouse) 
+	{
 		firstMouse = false;
-		lastX = xpos;
-		lastY = ypos;
+		lastX = (GLfloat)xpos;
+		lastY = (GLfloat)ypos;
 	}
 
-	GLfloat xOffset = xpos - lastX;
-	GLfloat yOffset = lastY - ypos;
-	lastX = xpos;
-	lastY = ypos;
+	GLfloat xOffset = (GLfloat)(xpos - lastX);
+	GLfloat yOffset = (GLfloat)(lastY - ypos);
+	lastX = (GLfloat)xpos;
+	lastY = (GLfloat)ypos;
 
 	camera.ProcessMouseMovement(xOffset, yOffset);
 }
 
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
-	camera.ProcessMouseScroll(yoffset);
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) 
+{
+	camera.ProcessMouseScroll((GLfloat)yoffset);
 }
 
-void do_movement() {
-
+void do_movement() 
+{
 	if (keys[GLFW_KEY_W])
 		camera.ProcessKeyboard(CameraMovement::FORWARD, deltaTime);
 
@@ -92,7 +102,37 @@ void do_movement() {
 		camera.ProcessKeyboard(CameraMovement::RIGHT, deltaTime);
 }
 
-int main() {
+void renderScene(Shader& shader)
+{
+	glBindVertexArray(VAO_plane);
+
+	glm::mat4 model = glm::mat4();
+	model = glm::scale(model, glm::vec3(20.0f));
+
+	shader.setMat4("model", model);
+
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+
+	glBindVertexArray(VAO_cube);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, diffuseMap_cube);
+	shader.setInt("material.diffuse", 1);
+
+	for (int i = 0; i < cubeCount; i++)
+	{
+		glm::mat4 model_cube;
+		model_cube = glm::translate(model_cube, cubePositions[i]);
+		shader.setMat4("model", model_cube);
+
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+	}
+
+	glBindVertexArray(0);
+}
+
+int main() 
+{
 
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -102,7 +142,8 @@ int main() {
 
 	// Create window
 	GLFWwindow* window = glfwCreateWindow(800, 600, "LearnOpenGL", nullptr, nullptr);
-	if (window == nullptr) {
+	if (window == nullptr) 
+	{
 		glfwTerminate();
 		std::cout << "Failed to create GLFW window" << std::endl;
 		return -1;
@@ -112,7 +153,8 @@ int main() {
 	// init glew
 	glewExperimental = GL_TRUE;
 	GLenum err = glewInit();
-	if (err != GLEW_OK) {
+	if (err != GLEW_OK) 
+	{
 		glfwTerminate();
 		std::cout << "Failed to init GLEW: " << glewGetErrorString(err) << std::endl;
 		return -1;
@@ -124,11 +166,12 @@ int main() {
 	// Setup Shaders
 	Shader simpleDepthShader("Shaders/Shadow/SimpleDepthShader.vs", "Shaders/Shadow/SimpleDepthShader.frag");
 	Shader baseScreenShader("Shaders/ScreenShader.vs", "Shaders/RenderDepthScreenShader.frag");
-	Shader shaderWithShadow("Shaders/Simple3DShaderLightTutShadow.vs", "Shaders/SimpleShaderLightColorShadow.frag");
+	Shader shaderWithShadow("Shaders/Shadow/Shadow.vs", "Shaders/Shadow/Shadow.frag");
 	
 	// Initialize all buffers
 	// 3D cube
-	GLfloat plane_vertices[] = {
+	GLfloat plane_vertices[] = 
+	{
 		// positions			// normals				// texture coords
 		-1.0f,  0.0f, -1.0f,	0.0f,  1.0f,  0.0f,		0.0f, 1.0f,
 		1.0f,  0.0f,  1.0f,		0.0f,  1.0f,  0.0f,		1.0f, 0.0f,
@@ -142,7 +185,7 @@ int main() {
 	GLuint VBO_plane;
 	glGenBuffers(1, &VBO_plane);
 
-	GLuint VAO_plane;
+	// Generate VAO
 	glGenVertexArrays(1, &VAO_plane);
 
 	glBindVertexArray(VAO_plane);
@@ -164,7 +207,8 @@ int main() {
 	glBindVertexArray(0);
 
 	// 3D cube
-	GLfloat cube_vertices[] = {
+	GLfloat cube_vertices[] = 
+	{
 		// positions			// normals				// texture coords
 		-0.5f, -0.5f, -0.5f,	0.0f, 0.0f, -1.0f,		0.0f, 0.0f,
 		0.5f,  0.5f, -0.5f,		0.0f, 0.0f, -1.0f,		1.0f, 1.0f,
@@ -212,7 +256,7 @@ int main() {
 	GLuint VBO_cube;
 	glGenBuffers(1, &VBO_cube);
 
-	GLuint VAO_cube;
+	// generate VAO
 	glGenVertexArrays(1, &VAO_cube);
 
 	glBindVertexArray(VAO_cube);
@@ -317,8 +361,6 @@ int main() {
 	// Texture Container
 	image = SOIL_load_image("Resources/textures/container2.png", &t_width, &t_height, 0, SOIL_LOAD_RGB);
 
-	GLuint diffuseMap_cube;
-
 	glGenTextures(1, &diffuseMap_cube);
 
 	glBindTexture(GL_TEXTURE_2D, diffuseMap_cube);
@@ -344,13 +386,6 @@ int main() {
 
 	Material mat(diffuseMap, -1, 32.0F);
 
-	// More Data
-	glm::vec3 cubePositions[] = {
-		glm::vec3(0.0f,  0.5f,  1.0f),
-		glm::vec3(1.0f,  1.5f, 0.0f),
-		glm::vec3(-1.0f,  2.0f, 2.0f)
-	};
-
 	// set mouse callbacks
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetCursorPosCallback(window, mouse_callback);
@@ -362,17 +397,28 @@ int main() {
 	// Setup
 	glEnable(GL_DEPTH_TEST);
 
+	bool renderDebugDepth = false;
+
 	// Main loop of drawing
 	glViewport(0, 0, width, height);
-	while (!glfwWindowShouldClose(window)) {
+	while (!glfwWindowShouldClose(window)) 
+	{
 		// Check and call events
 		glfwPollEvents();
 
-
 		// calculate delta time
-		GLfloat currentFrame = glfwGetTime();
+		GLfloat currentFrame = (GLfloat)glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
+
+		if (keys[GLFW_KEY_SPACE])
+		{
+			renderDebugDepth = true;
+		}
+		else
+		{
+			renderDebugDepth = false;
+		}
 
 		do_movement();
 
@@ -392,32 +438,9 @@ int main() {
 
 		simpleDepthShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
 
-		glBindVertexArray(VAO_plane);
-
-		glm::mat4 model;
-		model = glm::scale(model, glm::vec3(20.0f));
-
-		simpleDepthShader.setMat4("model", model);
-
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-
-		glBindVertexArray(VAO_cube);
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, diffuseMap_cube);
-
-		for (int i = 0; i < 3; i++)
-		{
-			glm::mat4 model_cube;
-			model_cube = glm::translate(model_cube, cubePositions[i]);
-			simpleDepthShader.setMat4("model", model_cube);
-
-			glCullFace(GL_FRONT);
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-			glCullFace(GL_BACK);
-		}
-
-		glBindVertexArray(0);
+		glCullFace(GL_FRONT);
+		renderScene(simpleDepthShader);
+		glCullFace(GL_BACK);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -447,11 +470,6 @@ int main() {
 
 		shaderWithShadow.setFloat("material.shininess", mat.Shininess);
 
-		// Setting up Lights
-		shaderWithShadow.setBool("useDirLight", true);
-		shaderWithShadow.setBool("useSpotLight", false);
-		shaderWithShadow.setInt("pointLightCount", 0);
-
 		// Setting up Directional Light
 		shaderWithShadow.setVec3("dirLight.ambient", dirLight.Ambient);
 		shaderWithShadow.setVec3("dirLight.diffuse", dirLight.Diffuse);
@@ -464,44 +482,23 @@ int main() {
 		shaderWithShadow.setMat4("projection", projection);
 		shaderWithShadow.setMat4("lightSpaceMatrix", lightSpaceMatrix);
 
-		glBindVertexArray(VAO_plane);
-
-		model = glm::mat4();
-		model = glm::scale(model, glm::vec3(20.0f));
-
-		shaderWithShadow.setMat4("model", model);
-
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-
-		glBindVertexArray(VAO_cube);
-
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, diffuseMap_cube);
-		shaderWithShadow.setInt("material.diffuse", 1);
-
-		for (int i = 0; i < 3; i++)
-		{
-			glm::mat4 model_cube;
-			model_cube = glm::translate(model_cube, cubePositions[i]);
-			shaderWithShadow.setMat4("model", model_cube);
-
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}
-
-		glBindVertexArray(0);
+		renderScene(shaderWithShadow);
 
 		glBindTexture(GL_TEXTURE_2D, 0);
 
-		baseScreenShader.Use();
+		if (renderDebugDepth)
+		{
+			baseScreenShader.Use();
 
-		glBindVertexArray(VAO_quad);
-		glDisable(GL_DEPTH_TEST);
-		glBindTexture(GL_TEXTURE_2D, depthMap);
-		baseScreenShader.setInt("inTexture", 0);
-		//glDrawArrays(GL_TRIANGLES, 0, 6);
+			glBindVertexArray(VAO_quad);
+			glDisable(GL_DEPTH_TEST);
+			glBindTexture(GL_TEXTURE_2D, depthMap);
+			baseScreenShader.setInt("inTexture", 0);
+			glDrawArrays(GL_TRIANGLES, 0, 6);
 
-		glBindVertexArray(0);
-		glEnable(GL_DEPTH_TEST);
+			glBindVertexArray(0);
+			glEnable(GL_DEPTH_TEST);
+		}
 
 		// Swap the buffers
 		glfwSwapBuffers(window);
@@ -514,9 +511,6 @@ int main() {
 	glDeleteBuffers(1, &VBO_cube);
 	glDeleteTextures(1, &depthMap);
 	glDeleteFramebuffers(1, &depthMapFBO);
-
-
-	ShaderManager::Destroy();
 
 	// Terminate before close
 	glfwTerminate();

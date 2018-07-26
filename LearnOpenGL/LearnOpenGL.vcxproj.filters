@@ -172,11 +172,5 @@
     <None Include="Shaders\RenderDepthScreenShader.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Shaders\SimpleShaderLightColorShadow.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="Shaders\Simple3DShaderLightTutShadow.vs">
-      <Filter>Shaders</Filter>
-    </None>
   </ItemGroup>
 </Project>
