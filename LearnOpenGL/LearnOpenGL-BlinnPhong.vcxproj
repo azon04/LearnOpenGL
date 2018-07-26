@@ -144,11 +144,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Common\Camera.cpp" />
-    <ClCompile Include="Common\Mesh.cpp" />
-    <ClCompile Include="Common\Model.cpp" />
     <ClCompile Include="Common\PointLight.cpp" />
     <ClCompile Include="Common\Shader.cpp" />
-    <ClCompile Include="Common\ShaderManager.cpp" />
     <ClCompile Include="Common\SpotLight.cpp" />
     <ClCompile Include="LearnOpenGL-BlinnPhong\Main.cpp" />
   </ItemGroup>
@@ -157,11 +154,8 @@
     <ClInclude Include="Common\DirLight.h" />
     <ClInclude Include="Common\Light.h" />
     <ClInclude Include="Common\Material.h" />
-    <ClInclude Include="Common\Mesh.h" />
-    <ClInclude Include="Common\Model.h" />
     <ClInclude Include="Common\PointLight.h" />
     <ClInclude Include="Common\Shader.h" />
-    <ClInclude Include="Common\ShaderManager.h" />
     <ClInclude Include="Common\SpotLight.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

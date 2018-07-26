@@ -1,23 +1,17 @@
-
 // GLEW
-
 #include <GL/glew.h>
+
 // GLFW
 #include <GLFW/glfw3.h>
 
 #include <iostream>
-#include <fstream>
-#include <map>
 
-#include "ShaderManager.h"
 #include "Shader.h"
 #include "Camera.h"
 #include "Material.h"
 #include "Light.h"
-#include "DirLight.h"
 #include "PointLight.h"
 #include "SpotLight.h"
-#include "Model.h"
 
 #include "SOIL.h"
 
@@ -44,10 +38,12 @@ GLfloat lastFrame = 0.0f;	// Time of the last frame
 int width, height;
 
 // input callback function
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode) {
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode) 
+{
 	// When user presses the escape key, we set the WindowsShouldClose property to true
 	// closing the application
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) 
+	{
 		glfwSetWindowShouldClose(window, GL_TRUE);
 	}
 
@@ -57,28 +53,31 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		keys[key] = false;
 }
 
-void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
+void mouse_callback(GLFWwindow* window, double xpos, double ypos) 
+{
 	static bool firstMouse = true;
-	if (firstMouse) {
+	if (firstMouse) 
+	{
 		firstMouse = false;
-		lastX = xpos;
-		lastY = ypos;
+		lastX = (GLfloat)xpos;
+		lastY = (GLfloat)ypos;
 	}
 
-	GLfloat xOffset = xpos - lastX;
-	GLfloat yOffset = lastY - ypos;
-	lastX = xpos;
-	lastY = ypos;
+	GLfloat xOffset = (GLfloat)(xpos - lastX);
+	GLfloat yOffset = (GLfloat)(lastY - ypos);
+	lastX = (GLfloat)xpos;
+	lastY = (GLfloat)ypos;
 
 	camera.ProcessMouseMovement(xOffset, yOffset);
 }
 
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
-	camera.ProcessMouseScroll(yoffset);
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) 
+{
+	camera.ProcessMouseScroll((GLfloat)yoffset);
 }
 
-void do_movement() {
-
+void do_movement() 
+{
 	if (keys[GLFW_KEY_W])
 		camera.ProcessKeyboard(CameraMovement::FORWARD, deltaTime);
 
@@ -92,8 +91,8 @@ void do_movement() {
 		camera.ProcessKeyboard(CameraMovement::RIGHT, deltaTime);
 }
 
-int main() {
-
+int main() 
+{
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -102,7 +101,8 @@ int main() {
 
 	// Create window
 	GLFWwindow* window = glfwCreateWindow(800, 600, "LearnOpenGL", nullptr, nullptr);
-	if (window == nullptr) {
+	if (window == nullptr) 
+	{
 		glfwTerminate();
 		std::cout << "Failed to create GLFW window" << std::endl;
 		return -1;
@@ -112,7 +112,8 @@ int main() {
 	// init glew
 	glewExperimental = GL_TRUE;
 	GLenum err = glewInit();
-	if (err != GLEW_OK) {
+	if (err != GLEW_OK) 
+	{
 		glfwTerminate();
 		std::cout << "Failed to init GLEW: " << glewGetErrorString(err) << std::endl;
 		return -1;
@@ -122,11 +123,12 @@ int main() {
 	glfwGetFramebufferSize(window, &width, &height);
 
 	// Setup Shaders
-	ShaderManager::Init();
+	Shader renderShader("Shaders/Simple3DShaderLightTut.vs", "Shaders/SimpleShaderLightColor.frag");
 
 	// Initialize all buffers
 	// Plane buffer
-	GLfloat plane[] = {
+	GLfloat plane[] = 
+	{
 		// positions		// normals				// texture coords
 		10.0f, -0.5f,  10.0f,  0.0f, 1.0f, 0.0f,  10.0f,  0.0f,
 		-10.0f, -0.5f,  10.0f,  0.0f, 1.0f, 0.0f,   0.0f,  0.0f,
@@ -135,7 +137,6 @@ int main() {
 		10.0f, -0.5f,  10.0f,  0.0f, 1.0f, 0.0f,  10.0f,  0.0f,
 		-10.0f, -0.5f, -10.0f,  0.0f, 1.0f, 0.0f,   0.0f, 10.0f,
 		10.0f, -0.5f, -10.0f,  0.0f, 1.0f, 0.0f,  10.0f, 10.0f
-
 	};
 
 	GLuint VBO;
@@ -164,7 +165,7 @@ int main() {
 
 	// Setting up Textures
 	
-	// Seting up diffuse map
+	// Setting up diffuse map
 	int t_width, t_height;
 	unsigned char* image = SOIL_load_image("Resources/textures/wall.jpg", &t_width, &t_height, 0, SOIL_LOAD_RGB);
 
@@ -200,17 +201,28 @@ int main() {
 	// Setup
 	glEnable(GL_DEPTH_TEST);
 
+	bool bUseBlinn = true;
+
 	// Main loop of drawing
 	glViewport(0, 0, width, height);
-	while (!glfwWindowShouldClose(window)) {
+	while (!glfwWindowShouldClose(window)) 
+	{
 		// Check and call events
 		glfwPollEvents();
 
 		// calculate delta time
-		GLfloat currentFrame = glfwGetTime();
+		GLfloat currentFrame = (GLfloat)glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
+		if (keys[GLFW_KEY_SPACE])
+		{
+			bUseBlinn = false;
+		}
+		else
+		{
+			bUseBlinn = true;
+		}
 		do_movement();
 
 		// Rendering commands here
@@ -218,54 +230,53 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// Draw
-		Shader* shader = ShaderManager::getInstance()->getShaderByType(SHADER_TYPE_VERTICE_LIGHT_PHONG);
-		shader->Use();
+		renderShader.Use();
 
 		glm::mat4 view = camera.GetViewMatrix();
 		glm::mat4 projection = glm::perspective(camera.Zoom, width / (float)height, 0.1f, 100.0f);
 		glm::mat4 model;
 
 		// Camera position
-		shader->setVec3("viewPos", camera.Position);
+		renderShader.setVec3("viewPos", camera.Position);
 
 		// Material
-		shader->setInt("material.diffuse", 0);
-		shader->setBool("useSpecular", false);
+		renderShader.setInt("material.diffuse", 0);
+		renderShader.setBool("useSpecular", false);
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, diffuseMap);
 
-		shader->setFloat("material.shininess", material.Shininess);
+		renderShader.setFloat("material.shininess", material.Shininess);
 
 		// Setup Light in shader
-		shader->setBool("useBlinn", true);
+		renderShader.setBool("useBlinn", bUseBlinn);
 
-		shader->setBool("useDirLight", false);
+		renderShader.setBool("useDirLight", false);
 
-		shader->setInt("pointLightCount", 1);
-		shader->setVec3("pointLights[0].position", light.Position);
-		shader->setFloat("pointLights[0].constant", light.Constant);
-		shader->setFloat("pointLights[0].linear", light.Linear);
-		shader->setFloat("pointLights[0].quadratic", light.Quadratic);
-		shader->setVec3("pointLights[0].ambient", light.Ambient);
-		shader->setVec3("pointLights[0].diffuse", light.Diffuse);
-		shader->setVec3("pointLights[0].specular", light.Specular);
+		renderShader.setInt("pointLightCount", 1);
+		renderShader.setVec3("pointLights[0].position", light.Position);
+		renderShader.setFloat("pointLights[0].constant", light.Constant);
+		renderShader.setFloat("pointLights[0].linear", light.Linear);
+		renderShader.setFloat("pointLights[0].quadratic", light.Quadratic);
+		renderShader.setVec3("pointLights[0].ambient", light.Ambient);
+		renderShader.setVec3("pointLights[0].diffuse", light.Diffuse);
+		renderShader.setVec3("pointLights[0].specular", light.Specular);
 
-		shader->setBool("useSpotLight", false);
-		shader->setVec3("spotLight.position", spotLight.Position);
-		shader->setVec3("spotLight.direction", spotLight.Direction);
-		shader->setFloat("spotLight.cutOff", spotLight.CutOff);
-		shader->setFloat("spotLight.outerCutOff", spotLight.OuterCutOff);
-		shader->setVec3("spotLight.ambient", spotLight.Ambient);
-		shader->setVec3("spotLight.diffuse", spotLight.Diffuse);
-		shader->setVec3("spotLight.specular", spotLight.Specular);
-		shader->setFloat("spotLight.constant", spotLight.Constant);
-		shader->setFloat("spotLight.linear", spotLight.Linear);
-		shader->setFloat("spotLight.quadratic", spotLight.Quadratic);
+		renderShader.setBool("useSpotLight", false);
+		renderShader.setVec3("spotLight.position", spotLight.Position);
+		renderShader.setVec3("spotLight.direction", spotLight.Direction);
+		renderShader.setFloat("spotLight.cutOff", spotLight.CutOff);
+		renderShader.setFloat("spotLight.outerCutOff", spotLight.OuterCutOff);
+		renderShader.setVec3("spotLight.ambient", spotLight.Ambient);
+		renderShader.setVec3("spotLight.diffuse", spotLight.Diffuse);
+		renderShader.setVec3("spotLight.specular", spotLight.Specular);
+		renderShader.setFloat("spotLight.constant", spotLight.Constant);
+		renderShader.setFloat("spotLight.linear", spotLight.Linear);
+		renderShader.setFloat("spotLight.quadratic", spotLight.Quadratic);
 
-		shader->setMat4("view", view);
-		shader->setMat4("projection", projection);
-		shader->setMat4("model", model);
+		renderShader.setMat4("view", view);
+		renderShader.setMat4("projection", projection);
+		renderShader.setMat4("model", model);
 
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -279,8 +290,6 @@ int main() {
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
 	glDeleteTextures(1, &diffuseMap);
-
-	ShaderManager::Destroy();
 
 	// Terminate before close
 	glfwTerminate();

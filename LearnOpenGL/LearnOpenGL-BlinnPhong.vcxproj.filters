@@ -21,19 +21,10 @@
     <ClCompile Include="Common\Camera.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="Common\Mesh.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
-    <ClCompile Include="Common\Model.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
     <ClCompile Include="Common\PointLight.cpp">
       <Filter>Common</Filter>
     </ClCompile>
     <ClCompile Include="Common\Shader.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
-    <ClCompile Include="Common\ShaderManager.cpp">
       <Filter>Common</Filter>
     </ClCompile>
     <ClCompile Include="Common\SpotLight.cpp">
@@ -56,19 +47,10 @@
     <ClInclude Include="Common\Material.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="Common\Mesh.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="Common\Model.h">
-      <Filter>Common</Filter>
-    </ClInclude>
     <ClInclude Include="Common\PointLight.h">
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="Common\Shader.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="Common\ShaderManager.h">
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="Common\SpotLight.h">
