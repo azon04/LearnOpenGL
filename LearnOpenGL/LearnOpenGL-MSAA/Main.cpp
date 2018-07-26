@@ -1,23 +1,14 @@
-
 // GLEW
-
 #include <GL/glew.h>
+
 // GLFW
 #include <GLFW/glfw3.h>
 
 #include <iostream>
-#include <fstream>
-#include <map>
 
-#include "ShaderManager.h"
 #include "Shader.h"
 #include "Camera.h"
 #include "Material.h"
-#include "Light.h"
-#include "DirLight.h"
-#include "PointLight.h"
-#include "SpotLight.h"
-#include "Model.h"
 
 #include "SOIL.h"
 
@@ -29,26 +20,71 @@
 
 #include "glm/gtx/norm.hpp"
 
+// Global Variables
+Camera camera(0.0f, 2.0f, 4.0f, 0.0f, 1.0f, 0.0f);
+
+GLfloat lastX = 400, lastY = 300;
+
+// keep track key
+bool keys[1024];
+
 // Time tracker
 GLfloat deltaTime = 0.0f;	// Time between current frame and last frame
 GLfloat lastFrame = 0.0f;	// Time of the last frame
 
 int width, height;
-
 // input callback function
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode) {
-	
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
+{
+	// When user presses the escape key, we set the WindowsShouldClose property to true
+	// closing the application
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+	{
+		glfwSetWindowShouldClose(window, GL_TRUE);
+	}
+
+	if (action == GLFW_PRESS)
+		keys[key] = true;
+	else if (action == GLFW_RELEASE)
+		keys[key] = false;
 }
 
-void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
-	
+void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+	static bool firstMouse = true;
+	if (firstMouse)
+	{
+		firstMouse = false;
+		lastX = (GLfloat)xpos;
+		lastY = (GLfloat)ypos;
+	}
+
+	GLfloat xOffset = (GLfloat)(xpos - lastX);
+	GLfloat yOffset = (GLfloat)(lastY - ypos);
+	lastX = (GLfloat)xpos;
+	lastY = (GLfloat)ypos;
+
+	camera.ProcessMouseMovement(xOffset, yOffset);
 }
 
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
-	
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	camera.ProcessMouseScroll((GLfloat)yoffset);
 }
 
-void do_movement() {
+void do_movement()
+{
+	if (keys[GLFW_KEY_W])
+		camera.ProcessKeyboard(CameraMovement::FORWARD, deltaTime);
+
+	if (keys[GLFW_KEY_S])
+		camera.ProcessKeyboard(CameraMovement::BACKWARD, deltaTime);
+
+	if (keys[GLFW_KEY_A])
+		camera.ProcessKeyboard(CameraMovement::LEFT, deltaTime);
+
+	if (keys[GLFW_KEY_D])
+		camera.ProcessKeyboard(CameraMovement::RIGHT, deltaTime);
 }
 
 int main() {
@@ -64,7 +100,8 @@ int main() {
 
 	// Create window
 	GLFWwindow* window = glfwCreateWindow(800, 600, "LearnOpenGL", nullptr, nullptr);
-	if (window == nullptr) {
+	if (window == nullptr) 
+	{
 		glfwTerminate();
 		std::cout << "Failed to create GLFW window" << std::endl;
 		return -1;
@@ -74,7 +111,8 @@ int main() {
 	// init glew
 	glewExperimental = GL_TRUE;
 	GLenum err = glewInit();
-	if (err != GLEW_OK) {
+	if (err != GLEW_OK) 
+	{
 		glfwTerminate();
 		std::cout << "Failed to init GLEW: " << glewGetErrorString(err) << std::endl;
 		return -1;
@@ -84,11 +122,12 @@ int main() {
 	glfwGetFramebufferSize(window, &width, &height);
 
 	// Setup Shaders
-	ShaderManager::Init();
+	Shader renderShader("Shaders/Simple3DShaderLightTut.vs", "Shaders/SimpleShaderUnlitColor.frag");
 
 	// Initialize all buffers
 	// 3D cube
-	GLfloat cube_vertices[] = {
+	GLfloat cube_vertices[] = 
+	{
 		// positions			// normals				// texture coords
 		-0.5f, -0.5f, -0.5f,	0.0f, 0.0f, -1.0f,		0.0f, 0.0f,
 		0.5f, -0.5f, -0.5f,		0.0f, 0.0f, -1.0f,		1.0f, 0.0f,
@@ -193,16 +232,17 @@ int main() {
 	glEnable(GL_MULTISAMPLE);
 
 	glm::mat4 projection = glm::perspective(glm::radians(45.0f), width / (float)height, 0.1f, 100.0f);
-	glm::mat4 view = glm::lookAt(glm::vec3(1.0f, 0.75f, -1.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f));
+	
 
 	// Main loop of drawing
 	glViewport(0, 0, width, height);
-	while (!glfwWindowShouldClose(window)) {
+	while (!glfwWindowShouldClose(window)) 
+	{
 		// Check and call events
 		glfwPollEvents();
 
 		// calculate delta time
-		GLfloat currentFrame = glfwGetTime();
+		GLfloat currentFrame = (GLfloat)glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
@@ -213,14 +253,15 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// Draw
-		Shader* drawShader = ShaderManager::getInstance()->getShaderByType(SHADER_TYPE_VERTICE_UNLIT_3D);
-		drawShader->Use();
+		renderShader.Use();
 
-		drawShader->setMat4("view", view);
-		drawShader->setMat4("projection", projection);
-		drawShader->setMat4("model", glm::mat4());
+		glm::mat4 view = camera.GetViewMatrix();
 
-		drawShader->setInt("material.diffuse", 0);
+		renderShader.setMat4("view", view);
+		renderShader.setMat4("projection", projection);
+		renderShader.setMat4("model", glm::mat4());
+
+		renderShader.setInt("material.diffuse", 0);
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, diffuseMap);
@@ -239,8 +280,6 @@ int main() {
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
 	glDeleteTextures(1, &diffuseMap);
-
-	ShaderManager::Destroy();
 
 	// Terminate before close
 	glfwTerminate();
