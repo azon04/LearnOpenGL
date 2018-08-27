@@ -19,9 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{A1D82F7D-EA83-4CE7-ADF3-1793E89FC0AC}</ProjectGuid>
+    <ProjectGuid>{DE285A77-C3B9-4BEE-82B8-B8C82DF0B93E}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>LearnOpenGLShadowMap</RootNamespace>
+    <RootNamespace>LearnOpenGLNormalMap</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -144,21 +144,29 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Common\Camera.cpp" />
+    <ClCompile Include="Common\Mesh.cpp" />
+    <ClCompile Include="Common\Model.cpp" />
+    <ClCompile Include="Common\PointLight.cpp" />
     <ClCompile Include="Common\Shader.cpp" />
-    <ClCompile Include="LearnOpenGL-ShadowMap\Main.cpp" />
+    <ClCompile Include="Common\ShaderManager.cpp" />
+    <ClCompile Include="Common\SpotLight.cpp" />
+    <ClCompile Include="LearnOpenGL-NormalMap\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common\Camera.h" />
     <ClInclude Include="Common\DirLight.h" />
     <ClInclude Include="Common\Light.h" />
     <ClInclude Include="Common\Material.h" />
+    <ClInclude Include="Common\Mesh.h" />
+    <ClInclude Include="Common\Model.h" />
+    <ClInclude Include="Common\PointLight.h" />
     <ClInclude Include="Common\Shader.h" />
+    <ClInclude Include="Common\ShaderManager.h" />
+    <ClInclude Include="Common\SpotLight.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\Shadow\Shadow.frag" />
-    <None Include="Shaders\Shadow\Shadow.vs" />
-    <None Include="Shaders\Shadow\SimpleDepthShader.frag" />
-    <None Include="Shaders\Shadow\SimpleDepthShader.vs" />
+    <None Include="Shaders\NormalMap\LightNormalMapFragment.frag" />
+    <None Include="Shaders\NormalMap\Simple3DShader.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

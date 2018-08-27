@@ -17,17 +17,32 @@
       <UniqueIdentifier>{2d9b5ca8-49ea-4944-ba26-35dc344ec496}</UniqueIdentifier>
     </Filter>
     <Filter Include="Shaders">
-      <UniqueIdentifier>{f9cef325-e331-44b8-92f0-4e7a97525c74}</UniqueIdentifier>
+      <UniqueIdentifier>{23a33010-3b23-4228-b3ab-f01d5d20712a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Common\Camera.cpp">
       <Filter>Common</Filter>
     </ClCompile>
+    <ClCompile Include="Common\Mesh.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\Model.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\PointLight.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
     <ClCompile Include="Common\Shader.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="LearnOpenGL-ShadowMap\Main.cpp">
+    <ClCompile Include="Common\ShaderManager.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\SpotLight.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="LearnOpenGL-NormalMap\Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -44,21 +59,30 @@
     <ClInclude Include="Common\Material.h">
       <Filter>Common</Filter>
     </ClInclude>
+    <ClInclude Include="Common\Mesh.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Model.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\PointLight.h">
+      <Filter>Common</Filter>
+    </ClInclude>
     <ClInclude Include="Common\Shader.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\ShaderManager.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\SpotLight.h">
       <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\Shadow\Shadow.frag">
+    <None Include="Shaders\NormalMap\LightNormalMapFragment.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Shaders\Shadow\Shadow.vs">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="Shaders\Shadow\SimpleDepthShader.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="Shaders\Shadow\SimpleDepthShader.vs">
+    <None Include="Shaders\NormalMap\Simple3DShader.vs">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

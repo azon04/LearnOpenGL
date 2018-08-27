@@ -1,7 +1,7 @@
 
 // GLEW
-
 #include <GL/glew.h>
+
 // GLFW
 #include <GLFW/glfw3.h>
 
@@ -9,7 +9,6 @@
 #include <fstream>
 #include <map>
 
-#include "ShaderManager.h"
 #include "Shader.h"
 #include "Camera.h"
 #include "Material.h"
@@ -44,7 +43,8 @@ GLfloat lastFrame = 0.0f;	// Time of the last frame
 int width, height;
 
 // input callback function
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode) {
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode) 
+{
 	// When user presses the escape key, we set the WindowsShouldClose property to true
 	// closing the application
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
@@ -57,7 +57,8 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		keys[key] = false;
 }
 
-void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
+void mouse_callback(GLFWwindow* window, double xpos, double ypos) 
+{
 	static bool firstMouse = true;
 	if (firstMouse) {
 		firstMouse = false;
@@ -73,12 +74,13 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 	camera.ProcessMouseMovement(xOffset, yOffset);
 }
 
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) 
+{
 	camera.ProcessMouseScroll(yoffset);
 }
 
-void do_movement() {
-
+void do_movement() 
+{
 	if (keys[GLFW_KEY_W])
 		camera.ProcessKeyboard(CameraMovement::FORWARD, deltaTime);
 
@@ -92,8 +94,8 @@ void do_movement() {
 		camera.ProcessKeyboard(CameraMovement::RIGHT, deltaTime);
 }
 
-int main() {
-
+int main() 
+{
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -112,7 +114,8 @@ int main() {
 	// init glew
 	glewExperimental = GL_TRUE;
 	GLenum err = glewInit();
-	if (err != GLEW_OK) {
+	if (err != GLEW_OK) 
+	{
 		glfwTerminate();
 		std::cout << "Failed to init GLEW: " << glewGetErrorString(err) << std::endl;
 		return -1;
@@ -143,10 +146,10 @@ int main() {
 
 	// Main loop of drawing
 	glViewport(0, 0, width, height);
-	while (!glfwWindowShouldClose(window)) {
+	while (!glfwWindowShouldClose(window)) 
+	{
 		// Check and call events
 		glfwPollEvents();
-
 
 		// calculate delta time
 		GLfloat currentFrame = glfwGetTime();
@@ -166,8 +169,6 @@ int main() {
 	}
 
 	// Deleting All Buffers
-	
-
 	ShaderManager::Destroy();
 
 	// Terminate before close
