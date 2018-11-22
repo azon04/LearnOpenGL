@@ -39,6 +39,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LearnOpenGL-PointShadows", 
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LearnOpenGL-NormalMap", "LearnOpenGL\LearnOpenGL-NormalMap.vcxproj", "{DE285A77-C3B9-4BEE-82B8-B8C82DF0B93E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LearnOpenGL-ParallaxMapping", "LearnOpenGL\LearnOpenGL-ParallaxMapping.vcxproj", "{0ACF24C3-9940-4B38-8497-EED1CD3A066C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -191,6 +193,14 @@ Global
 		{DE285A77-C3B9-4BEE-82B8-B8C82DF0B93E}.Release|x64.Build.0 = Release|x64
 		{DE285A77-C3B9-4BEE-82B8-B8C82DF0B93E}.Release|x86.ActiveCfg = Release|Win32
 		{DE285A77-C3B9-4BEE-82B8-B8C82DF0B93E}.Release|x86.Build.0 = Release|Win32
+		{0ACF24C3-9940-4B38-8497-EED1CD3A066C}.Debug|x64.ActiveCfg = Debug|x64
+		{0ACF24C3-9940-4B38-8497-EED1CD3A066C}.Debug|x64.Build.0 = Debug|x64
+		{0ACF24C3-9940-4B38-8497-EED1CD3A066C}.Debug|x86.ActiveCfg = Debug|Win32
+		{0ACF24C3-9940-4B38-8497-EED1CD3A066C}.Debug|x86.Build.0 = Debug|Win32
+		{0ACF24C3-9940-4B38-8497-EED1CD3A066C}.Release|x64.ActiveCfg = Release|x64
+		{0ACF24C3-9940-4B38-8497-EED1CD3A066C}.Release|x64.Build.0 = Release|x64
+		{0ACF24C3-9940-4B38-8497-EED1CD3A066C}.Release|x86.ActiveCfg = Release|Win32
+		{0ACF24C3-9940-4B38-8497-EED1CD3A066C}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
