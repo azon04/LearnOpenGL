@@ -80,6 +80,7 @@ float ParallaxSoftShadowMultiplier(vec2 texCoords, vec3 lightDir)
 
 	return shadowMultiplier;
 }
+
 vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir)
 {
 	const float minLayers = 8.0;

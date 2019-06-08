@@ -3,7 +3,7 @@
 #include <iostream>
 
 #include <GL/glew.h>
-#include <SOIL.h>
+#include "stb_image.h"
 
 
 Model::Model(char *path)
@@ -142,7 +142,7 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType 
 unsigned int Model::TextureFromFile(std::string file, std::string directory)
 {
 	int width, height;
-	unsigned char* image = SOIL_load_image((directory + "/" + file).c_str(), &width, &height, 0, SOIL_LOAD_RGB);
+	unsigned char* image = stbi_load((directory + "/" + file).c_str(), &width, &height, 0, 3);
 
 	unsigned int id;
 
@@ -164,7 +164,7 @@ unsigned int Model::TextureFromFile(std::string file, std::string directory)
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	SOIL_free_image_data(image);
+	stbi_image_free(image);
 
 	return id;
 }
