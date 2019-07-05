@@ -12,15 +12,22 @@ uniform float roughness;
 uniform float ao;
 
 uniform samplerCube irradianceMap;
+uniform samplerCube prefilterMap;
+uniform sampler2D brdfLUT;
 
 uniform vec3 lightPositions[4];
 uniform vec3 lightColors[4];
 
 const float PI = 3.14159265359;
 
-vec3 fresnelShlick(float cosTheta, vec3 F0, float roughness)
+vec3 fresnelShlickRoughness(float cosTheta, vec3 F0, float roughness)
 {
-    return F0 + (max(vec3(1.0 - roughness),F0) - F0) * pow((1.0 - cosTheta), 5);
+    return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(1.0 - cosTheta, 5.0);
+}
+
+vec3 fresnelShlick(float cosTheta, vec3 F0)
+{
+    return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
 }
 
 float DistributionGGX(vec3 N, vec3 H, float roughness)
@@ -62,6 +69,8 @@ void main()
 {
     vec3 N = normalize(Normal);
     vec3 V = normalize(camPos - WorldPos);
+    vec3 R = reflect(-V, N);
+    float NdotV = max(dot(N,V), 0.0);
 
     vec3 F0 = vec3(0.04);
     F0 = mix(F0, albedo, metalic);
@@ -76,7 +85,7 @@ void main()
         float attenuation = 1.0 / (distance * distance);
         vec3 radiance = lightColors[i] * attenuation;
 
-        vec3 F = fresnelShlick(max(dot(H, V), 0.0), F0, roughness);
+        vec3 F = fresnelShlick(max(dot(H, V), 0.0), F0);
 
         float NDF = DistributionGGX(N, H, roughness);
         float G = GeometrySmith(N, V, L, roughness);
@@ -94,12 +103,21 @@ void main()
         Lo += (kD * albedo / PI + specular) * radiance * NdotL;
     }
 
+    vec3 F = fresnelShlickRoughness(NdotV, F0, roughness);
+    
     // ambient lighting (using IBL as the ambient term)
-    vec3 kS = fresnelShlick(max(dot(N,V), 0.0), F0, roughness);
+    vec3 kS = F;
     vec3 kD = 1.0 - kS;
+
     vec3 irradiance = texture(irradianceMap, N).rgb;
     vec3 diffuse = irradiance * albedo;
-    vec3 ambient = (kD * diffuse) * ao;
+
+    const float MAX_REFLECTION_LOD = 4.0;
+    vec3 prefilteredColor = textureLod(prefilterMap, R, roughness * MAX_REFLECTION_LOD).rgb;
+    vec2 envBRDF = texture(brdfLUT, vec2(NdotV, roughness)).rg;
+    vec3 specular = prefilteredColor * (F * envBRDF.x + envBRDF.y);
+    
+    vec3 ambient = (kD * diffuse + specular) * ao;
 
     vec3 color = ambient + Lo;
 

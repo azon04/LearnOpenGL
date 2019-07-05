@@ -43,6 +43,19 @@ GLfloat lastFrame = 0.0f;	// Time of the last frame
 
 int width, height;
 
+// Struct to hold sphere texture Data
+struct TexturedSphere
+{
+	glm::vec3 position;
+	GLuint VAO;
+	GLuint indexCount;
+	GLuint albedoMap;
+	GLuint normalMap;
+	GLuint metalicMap;
+	GLuint roughnessMap;
+	GLuint aoMap;
+};
+
 // input callback function
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode) 
 {
@@ -123,6 +136,75 @@ GLuint loadHDRImage(const char* imagePath)
 	return hdrTexture;
 }
 
+GLuint loadTexture(char const * path)
+{
+	unsigned int textureID;
+	glGenTextures(1, &textureID);
+
+	int width, height, nrComponents;
+	unsigned char *image = stbi_load(path, &width, &height, &nrComponents, 0);
+	if (image)
+	{
+		GLenum format;
+		if (nrComponents == 1)
+			format = GL_RED;
+		else if (nrComponents == 3)
+			format = GL_RGB;
+		else if (nrComponents == 4)
+			format = GL_RGBA;
+
+		glBindTexture(GL_TEXTURE_2D, textureID);
+		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, image);
+
+		glGenerateMipmap(GL_TEXTURE_2D);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		stbi_image_free(image);
+	}
+	else
+	{
+		std::cout << "Texture failed to load at path: " << path << std::endl;
+		stbi_image_free(image);
+	}
+
+	return textureID;
+}
+
+void drawTexturedSphere(TexturedSphere* sphere, Shader* shader)
+{
+	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::translate(model, sphere->position);
+	shader->setMat4("model", model);
+
+	shader->setInt("albedoMap", 3);
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, sphere->albedoMap);
+
+	shader->setInt("normalMap", 4);
+	glActiveTexture(GL_TEXTURE4);
+	glBindTexture(GL_TEXTURE_2D, sphere->normalMap);
+
+	shader->setInt("metalicMap", 5);
+	glActiveTexture(GL_TEXTURE5);
+	glBindTexture(GL_TEXTURE_2D, sphere->metalicMap);
+
+	shader->setInt("roughnessMap", 6);
+	glActiveTexture(GL_TEXTURE6);
+	glBindTexture(GL_TEXTURE_2D, sphere->roughnessMap);
+
+	shader->setInt("aoMap", 7);
+	glActiveTexture(GL_TEXTURE7);
+	glBindTexture(GL_TEXTURE_2D, sphere->aoMap);
+
+	glBindVertexArray(sphere->VAO);
+	glDrawElements(GL_TRIANGLE_STRIP, sphere->indexCount, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
+}
+
 GLuint generateCubeMap()
 {
 	GLuint cubeMap;
@@ -174,13 +256,19 @@ int main()
 	// global openGL state
 	glEnable(GL_DEPTH_TEST);
 
+	// Enable Cubemap seamless interpolation between faces
+	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+
 	glDepthFunc(GL_LEQUAL);
 
 	// Setup Shaders
 	Shader PBRShader("Shaders/PBR/PBRShader.vs", "Shaders/PBR/PBRShader_IBL.frag");
+	Shader PBRTextureShader("Shaders/PBR/PBRShader.vs", "Shaders/PBR/PBRShaderTexture_IBL.frag");
 	Shader equirectangularToCubeMapShader("Shaders/PBR/EquirectangularToCubeMap.vs", "Shaders/PBR/EquirectangularToCubeMap.frag");
 	Shader backgroundShader("Shaders/PBR/Background.vs", "Shaders/PBR/Background.frag");
 	Shader irradianceShader("Shaders/PBR/IrradianceShader.vs", "Shaders/PBR/IrradianceShader.frag");
+	Shader prefilterShader("Shaders/PBR/PrefilterShader.vs", "Shaders/PBR/PrefilterShader.frag");
+	Shader brdfShader("Shaders/PBR/BRDFShader.vs", "Shaders/PBR/BRDFShader.frag");
 
 	// Initialize all buffers
 	GLuint sphereVAO;
@@ -201,7 +289,7 @@ int main()
 
 		const unsigned int X_SEGMENTS = 64;
 		const unsigned int Y_SEGMENTS = 64;
-		const float PI = 3.14159265359;
+		const float PI = 3.14159265359f;
 		for (unsigned int y = 0; y < Y_SEGMENTS; y++)
 		{
 			for (unsigned int x = 0; x <= X_SEGMENTS; x++)
@@ -273,6 +361,7 @@ int main()
 		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, stride, (void*)(5 * sizeof(float)));
 	}
 
+	// Setup Cube VBO/VAO
 	GLuint cubeVAO, cubeVBO;
 
 	float vertices[] = {
@@ -337,8 +426,31 @@ int main()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
+	// Setup Quad VBO/VAO
+	GLfloat quadVertices[] =
+	{
+		// Positions		// texture coords
+		-1.0f, 1.0f, 0.0f,	0.0f, 1.0f,
+		-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,	1.0f, 1.0f,
+		1.0f, -1.0f, 0.0f,	1.0f, 0.0f
+	};
+
+	GLuint quadVAO;
+	GLuint quadVBO;
+	glGenVertexArrays(1, &quadVAO);
+	glGenBuffers(1, &quadVBO);
+	glBindVertexArray(quadVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 5, (GLvoid*)0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 5, (GLvoid*)(sizeof(GLfloat) * 3));
+	glBindVertexArray(0);
+
 	// Setting up Textures
-	GLuint hdrTexture = loadHDRImage("Resources/textures/WoodenDoor_Ref.hdr");
+	GLuint hdrTexture = loadHDRImage("Resources/textures/PBR/EnvMap/Footprint_Court_2k.hdr");
 	GLuint envCubeMap = generateCubeMap();
 
 	GLuint captureFBO, captureRBO;
@@ -383,7 +495,12 @@ int main()
 	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	// Generate mipmap after env cube map converted
+	glBindTexture(GL_TEXTURE_CUBE_MAP, envCubeMap);
+	glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 	
+	// Create and Compute Irradiance Diffuse Map
 	GLuint irradianceMap;
 	glGenTextures(1, &irradianceMap);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
@@ -420,6 +537,131 @@ int main()
 		glBindVertexArray(0);
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	// Create and Compute Pre-filtered map of the environment map
+	GLuint prefilterMap;
+	glGenTextures(1, &prefilterMap);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
+	for (unsigned int i = 0; i < 6; i++)
+	{
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 128, 128, 0, GL_RGB, GL_FLOAT, nullptr);
+	}
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+
+	prefilterShader.Use();
+	prefilterShader.setInt("environmentMap", 0);
+	prefilterShader.setMat4("projection", captureProjection);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, envCubeMap);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+	unsigned int maxMipLevels = 5;
+	for (unsigned int mip = 0; mip < maxMipLevels; ++mip)
+	{
+		// resize framebuffer according to the mip level size
+		unsigned int mipWidth = 128 >> mip;
+		unsigned int mipHeight = 128 >> mip;
+		glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, mipWidth, mipHeight);
+		glViewport(0, 0, mipWidth, mipHeight);
+
+		float roughness = (float)mip / (float)(maxMipLevels - 1);
+		prefilterShader.setFloat("roughness", roughness);
+		for (unsigned int i = 0; i < 6; ++i)
+		{
+			prefilterShader.setMat4("view", captureViews[i]);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, prefilterMap, mip);
+
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			
+			glBindVertexArray(cubeVAO);
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+			glBindVertexArray(0);
+		}
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	// Create and compute brdf LUT map
+	GLuint brdfLUTTexture;
+	glGenTextures(1, &brdfLUTTexture);
+
+	// prea-allocate enough memory for the LUT texture
+	glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RG16F, 512, 512, 0, GL_RG, GL_FLOAT, 0);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+	glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, brdfLUTTexture, 0);
+
+	glViewport(0, 0, 512, 512);
+	brdfShader.Use();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glBindVertexArray(quadVAO);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	glBindVertexArray(0);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	// Setup Textured Sphere
+	const int texturedSpheresCount = 5;
+	TexturedSphere texturedSpheres[texturedSpheresCount];
+
+	texturedSpheres[0].VAO = sphereVAO;
+	texturedSpheres[0].indexCount = indexCount;
+	texturedSpheres[0].albedoMap = loadTexture("Resources/textures/PBR/rustediron2_basecolor.png");
+	texturedSpheres[0].normalMap = loadTexture("Resources/textures/PBR/rustediron2_normal.png");
+	texturedSpheres[0].metalicMap = loadTexture("Resources/textures/PBR/rustediron2_metallic.png");
+	texturedSpheres[0].roughnessMap = loadTexture("Resources/textures/PBR/rustediron2_roughness.png");
+	texturedSpheres[0].aoMap = loadTexture("Resources/textures/PBR/rustediron2_ao.png");
+	texturedSpheres[0].position = glm::vec3(0.0f, 10.0f, 0.0f);
+
+	texturedSpheres[1].VAO = sphereVAO;
+	texturedSpheres[1].indexCount = indexCount;
+	texturedSpheres[1].albedoMap = loadTexture("Resources/textures/PBR/scuffed-plastic/scuffed-plastic-alb.png");
+	texturedSpheres[1].normalMap = loadTexture("Resources/textures/PBR/scuffed-plastic/scuffed-plastic-normal.png");
+	texturedSpheres[1].metalicMap = loadTexture("Resources/textures/PBR/scuffed-plastic/scuffed-plastic-metal.png");
+	texturedSpheres[1].roughnessMap = loadTexture("Resources/textures/PBR/scuffed-plastic/scuffed-plastic_roughness.png");
+	texturedSpheres[1].aoMap = loadTexture("Resources/textures/PBR/scuffed-plastic/scuffed-plastic-ao.png");
+	texturedSpheres[1].position = glm::vec3(2.0f, 10.0f, 0.0f);
+
+	texturedSpheres[2].VAO = sphereVAO;
+	texturedSpheres[2].indexCount = indexCount;
+	texturedSpheres[2].albedoMap = loadTexture("Resources/textures/PBR/metalgrid/metalgrid1_basecolor.png");
+	texturedSpheres[2].normalMap = loadTexture("Resources/textures/PBR/metalgrid/metalgrid1_normal.png");
+	texturedSpheres[2].metalicMap = loadTexture("Resources/textures/PBR/metalgrid/metalgrid1_metallic.png");
+	texturedSpheres[2].roughnessMap = loadTexture("Resources/textures/PBR/metalgrid/metalgrid1_roughness.png");
+	texturedSpheres[2].aoMap = loadTexture("Resources/textures/PBR/metalgrid/metalgrid1_AO.png");
+	texturedSpheres[2].position = glm::vec3(-2.0f, 10.0f, 0.0f);
+
+	texturedSpheres[3].VAO = sphereVAO;
+	texturedSpheres[3].indexCount = indexCount;
+	texturedSpheres[3].albedoMap = loadTexture("Resources/textures/PBR/bamboo-wood/bamboo-wood-semigloss-albedo.png");
+	texturedSpheres[3].normalMap = loadTexture("Resources/textures/PBR/bamboo-wood/bamboo-wood-semigloss-normal.png");
+	texturedSpheres[3].metalicMap = loadTexture("Resources/textures/PBR/bamboo-wood/bamboo-wood-semigloss-metal.png");
+	texturedSpheres[3].roughnessMap = loadTexture("Resources/textures/PBR/bamboo-wood/bamboo-wood-semigloss-roughness.png");
+	texturedSpheres[3].aoMap = loadTexture("Resources/textures/PBR/bamboo-wood/bamboo-wood-semigloss-ao.png");
+	texturedSpheres[3].position = glm::vec3(4.0f, 10.0f, 0.0f);
+
+	texturedSpheres[4].VAO = sphereVAO;
+	texturedSpheres[4].indexCount = indexCount;
+	texturedSpheres[4].albedoMap = loadTexture("Resources/textures/PBR/copper/Copper-scuffed_basecolor-boosted.png");
+	texturedSpheres[4].normalMap = loadTexture("Resources/textures/PBR/copper/Copper-scuffed_normal.png");
+	texturedSpheres[4].metalicMap = loadTexture("Resources/textures/PBR/copper/Copper-scuffed_metallic.png");
+	texturedSpheres[4].roughnessMap = loadTexture("Resources/textures/PBR/copper/Copper-scuffed_roughness.png");
+	texturedSpheres[4].aoMap = loadTexture("Resources/textures/PBR/copper/Copper-scuffed_AO.png");
+	texturedSpheres[4].position = glm::vec3(-4.0f, 10.0f, 0.0f);
 
 	// Setup Lights
 	glm::vec3 lightPositions[] = 
@@ -470,11 +712,12 @@ int main()
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		glm::mat4 view = camera.GetViewMatrix();
+
 		PBRShader.Use();
 		PBRShader.setVec3("albedo", glm::vec3(1.0f, 0.0f, 0.0f));
 		PBRShader.setFloat("ao", 1.0f);
 
-		glm::mat4 view = camera.GetViewMatrix();
 		PBRShader.setMat4("view", view);
 		PBRShader.setMat4("projection", projection);
 		PBRShader.setVec3("camPos", camera.Position);
@@ -484,8 +727,15 @@ int main()
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
 
-		// Draw
-		glBindVertexArray(sphereVAO);
+		// Bind prefilterMap
+		PBRShader.setInt("prefilterMap", 1);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
+
+		// Bind brdfLUT
+		PBRShader.setInt("brdfLUT", 2);
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
 
 		for (unsigned int i = 0; i < sizeof(lightPositions) / sizeof(lightPositions[0]); ++i)
 		{
@@ -493,7 +743,9 @@ int main()
 			PBRShader.setVec3(("lightColors[" + std::to_string(i) + "]").c_str(), lightColors[i]);
 		}
 
-		glm::mat4 model = glm::mat4(1.0f);
+		// Draw
+		glBindVertexArray(sphereVAO);
+		
 		for (int row = 0; row < nrRows; row++)
 		{
 			PBRShader.setFloat("metalic", (float)row / (float)nrRows);
@@ -502,7 +754,7 @@ int main()
 				// we clamp the roughnes to 0.05 - 1.0 as perfectly smooth surface ( roughness of 0.0 tend to look a bit off on direct lighting
 				PBRShader.setFloat("roughness", glm::clamp((float)col / (float)nrCols, 0.05f, 1.0f));
 
-				model = glm::mat4(1.0f);
+				glm::mat4 model = glm::mat4(1.0f);
 				model = glm::translate(model, glm::vec3(
 					(col - (nrCols/2)) * spacing,
 					(row - (nrRows/2)) * spacing,
@@ -512,6 +764,37 @@ int main()
 				PBRShader.setMat4("model", model);
 				glDrawElements(GL_TRIANGLE_STRIP, indexCount, GL_UNSIGNED_INT, 0);
 			}
+		}
+
+		PBRTextureShader.Use();
+		PBRTextureShader.setMat4("view", view);
+		PBRTextureShader.setMat4("projection", projection);
+		PBRTextureShader.setVec3("camPos", camera.Position);
+
+		// Bind the irradiance map
+		PBRTextureShader.setInt("irradianceMap", 0);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
+
+		// Bind prefilterMap
+		PBRTextureShader.setInt("prefilterMap", 1);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
+
+		// Bind brdfLUT
+		PBRTextureShader.setInt("brdfLUT", 2);
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
+
+		for (unsigned int i = 0; i < sizeof(lightPositions) / sizeof(lightPositions[0]); ++i)
+		{
+			PBRTextureShader.setVec3(("lightPositions[" + std::to_string(i) + "]").c_str(), lightPositions[i]);
+			PBRTextureShader.setVec3(("lightColors[" + std::to_string(i) + "]").c_str(), lightColors[i]);
+		}
+
+		for (unsigned int i = 0; i < texturedSpheresCount; i++)
+		{
+			drawTexturedSphere(&texturedSpheres[i], &PBRTextureShader);
 		}
 
 		backgroundShader.Use();
@@ -528,9 +811,21 @@ int main()
 	}
 
 	// Deleting All Buffers
+	glDeleteVertexArrays(1, &quadVAO);
+	glDeleteBuffers(1, &quadVBO);
 	glDeleteVertexArrays(1, &sphereVAO);
 	glDeleteBuffers(1, &sphereEBO);
 	glDeleteBuffers(1, &sphereVBO);
+
+	// Delete all textures
+	for (unsigned int i = 0; i < texturedSpheresCount; i++)
+	{
+		glDeleteTextures(1, &texturedSpheres[i].albedoMap);
+		glDeleteTextures(1, &texturedSpheres[i].normalMap);
+		glDeleteTextures(1, &texturedSpheres[i].roughnessMap);
+		glDeleteTextures(1, &texturedSpheres[i].metalicMap);
+		glDeleteTextures(1, &texturedSpheres[i].aoMap);
+	}
 
 	// Terminate before close
 	glfwTerminate();
