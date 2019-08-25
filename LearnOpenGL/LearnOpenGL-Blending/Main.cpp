@@ -19,7 +19,7 @@
 #include "SpotLight.h"
 #include "Model.h"
 
-#include "SOIL.h"
+#include "stb_image.h"
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -267,7 +267,7 @@ int main() {
 
 	// setting up Textures
 	int t_width, t_height;
-	unsigned char* image = SOIL_load_image("Resources/textures/wall.jpg", &t_width, &t_height, 0, SOIL_LOAD_RGB);
+	unsigned char* image = stbi_load("Resources/textures/wall.jpg", &t_width, &t_height, 0, STBI_rgb);
 
 	GLuint diffuseMap;
 
@@ -286,12 +286,12 @@ int main() {
 
 	glGenerateMipmap(GL_TEXTURE_2D);
 
-	SOIL_free_image_data(image);
+	stbi_image_free(image);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	// Texture Container
-	image = SOIL_load_image("Resources/textures/container2.png", &t_width, &t_height, 0, SOIL_LOAD_RGB);
+	image = stbi_load("Resources/textures/container2.png", &t_width, &t_height, 0, STBI_rgb);
 
 	GLuint diffuseMap_cube;
 
@@ -310,15 +310,15 @@ int main() {
 
 	glGenerateMipmap(GL_TEXTURE_2D);
 
-	SOIL_free_image_data(image);
+	stbi_image_free(image);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	// Texture Transparent
 #if 1
-	image = SOIL_load_image("Resources/textures/blending_transparent_window.png", &t_width, &t_height, 0, SOIL_LOAD_RGBA);
+	image = stbi_load("Resources/textures/blending_transparent_window.png", &t_width, &t_height, 0, STBI_rgb_alpha);
 #else
-	image = SOIL_load_image("Resources/textures/grass.png", &t_width, &t_height, 0, SOIL_LOAD_RGBA);
+	image = stbi_load("Resources/textures/grass.png", &t_width, &t_height, 0, STBI_rgb_alpha);
 #endif
 
 	GLuint diffuseMap_transparent;
@@ -335,7 +335,7 @@ int main() {
 
 	glGenerateMipmap(GL_TEXTURE_2D);
 
-	SOIL_free_image_data(image);
+	stbi_image_free(image);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 

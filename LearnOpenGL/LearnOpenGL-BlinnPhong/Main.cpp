@@ -13,7 +13,7 @@
 #include "PointLight.h"
 #include "SpotLight.h"
 
-#include "SOIL.h"
+#include "stb_image.h"
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -167,7 +167,7 @@ int main()
 	
 	// Setting up diffuse map
 	int t_width, t_height;
-	unsigned char* image = SOIL_load_image("Resources/textures/wall.jpg", &t_width, &t_height, 0, SOIL_LOAD_RGB);
+	unsigned char* image = stbi_load("Resources/textures/wall.jpg", &t_width, &t_height, 0, STBI_rgb);
 
 	GLuint diffuseMap;
 
@@ -182,7 +182,7 @@ int main()
 
 	glGenerateMipmap(GL_TEXTURE_2D);
 
-	SOIL_free_image_data(image);
+	stbi_image_free(image);
 
 	// Setup Lights
 	PointLight light(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.05f, 0.05f, 0.05f), glm::vec3(0.3f, 0.3f, 0.3f), 1.0f, 0.0f, 0.0f);

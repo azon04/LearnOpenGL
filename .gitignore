@@ -8,3 +8,5 @@ LearnOpenGL/Debug
 Debug/
 .vs/
 *.VC.opendb
+Projects/
+LearnOpenGL.sln

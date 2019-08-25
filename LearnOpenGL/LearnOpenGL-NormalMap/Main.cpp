@@ -15,7 +15,7 @@
 #include "SpotLight.h"
 #include "Model.h"
 
-#include "SOIL.h"
+#include "stb_image.h"
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -234,7 +234,7 @@ int main()
 	GLuint diffuseMap;
 
 	int diffuse_width, diffuse_height;
-	unsigned char* image = SOIL_load_image("Resources/textures/brickwall.jpg", &diffuse_width, &diffuse_height, 0, SOIL_LOAD_RGB);
+	unsigned char* image = stbi_load("Resources/textures/brickwall.jpg", &diffuse_width, &diffuse_height, 0, STBI_rgb);
 
 	glGenTextures(1, &diffuseMap);
 	glBindTexture(GL_TEXTURE_2D, diffuseMap);
@@ -246,7 +246,7 @@ int main()
 
 	glGenerateMipmap(GL_TEXTURE_2D);
 
-	SOIL_free_image_data(image);
+	stbi_image_free(image);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -254,7 +254,7 @@ int main()
 	GLuint normalMap;
 
 	int normal_width, normal_height;
-	image = SOIL_load_image("Resources/textures/brickwall_normal.jpg", &normal_width, &normal_height, 0, SOIL_LOAD_RGB);
+	image = stbi_load("Resources/textures/brickwall_normal.jpg", &normal_width, &normal_height, 0, STBI_rgb);
 
 	glGenTextures(1, &normalMap);
 	glBindTexture(GL_TEXTURE_2D, normalMap);
@@ -266,7 +266,7 @@ int main()
 
 	glGenerateMipmap(GL_TEXTURE_2D);
 
-	SOIL_free_image_data(image);
+	stbi_image_free(image);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 

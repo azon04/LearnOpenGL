@@ -19,7 +19,7 @@
 #include "SpotLight.h"
 #include "Model.h"
 
-#include "SOIL.h"
+#include "stb_image.h"
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -101,7 +101,7 @@ unsigned int loadTexture(char const * path)
 	glGenTextures(1, &textureID);
 
 	int width, height, nrComponents;
-	unsigned char *image = SOIL_load_image(path, &width, &height, &nrComponents, 0);
+	unsigned char *image = stbi_load(path, &width, &height, &nrComponents, 0);
 	if (image)
 	{
 		GLenum format;
@@ -122,12 +122,11 @@ unsigned int loadTexture(char const * path)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-		SOIL_free_image_data(image);
+		stbi_image_free(image);
 	}
 	else
 	{
 		std::cout << "Texture failed to load at path: " << path << std::endl;
-		SOIL_free_image_data(image);
 	}
 
 	return textureID;

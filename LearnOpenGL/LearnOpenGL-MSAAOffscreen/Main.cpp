@@ -19,7 +19,7 @@
 #include "SpotLight.h"
 #include "Model.h"
 
-#include "SOIL.h"
+#include "stb_image.h"
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -191,7 +191,7 @@ int main() {
 
 	// Setting up Diffuse Map
 	int t_width, t_height;
-	unsigned char* image = SOIL_load_image("Resources/textures/container2.png", &t_width, &t_height, 0, SOIL_LOAD_RGB);
+	unsigned char* image = stbi_load("Resources/textures/container2.png", &t_width, &t_height, 0, STBI_rgb);
 
 	GLuint diffuseMap;
 
@@ -210,7 +210,7 @@ int main() {
 
 	glGenerateMipmap(GL_TEXTURE_2D);
 
-	SOIL_free_image_data(image);
+	stbi_image_free(image);
 
 
 	// SETUP FRAME BUFFER

@@ -8,7 +8,7 @@
 #include "Material.h"
 #include "PointLight.h"
 
-#include "SOIL.h"
+#include "stb_image.h"
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -277,9 +277,9 @@ int main()
 	int t_width, t_height;
 //#define USING_WOOD_TOYS
 #ifdef USING_WOOD_TOYS
-	unsigned char* image = SOIL_load_image("Resources/textures/wood.png", &t_width, &t_height, 0, SOIL_LOAD_RGB);
+	unsigned char* image = stbi_load("Resources/textures/wood.png", &t_width, &t_height, 0, STBI_rgb);
 #else
-	unsigned char* image = SOIL_load_image("Resources/textures/bricks2.jpg", &t_width, &t_height, 0, SOIL_LOAD_RGB);
+	unsigned char* image = stbi_load("Resources/textures/bricks2.jpg", &t_width, &t_height, 0, STBI_rgb);
 #endif
 	glGenTextures(1, &diffuseMap);
 
@@ -299,16 +299,16 @@ int main()
 
 	glGenerateMipmap(GL_TEXTURE_2D);
 
-	SOIL_free_image_data(image);
+	stbi_image_free(image);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	// Normal Maps
 	GLuint normalMap;
 #ifdef USING_WOOD_TOYS
-	image = SOIL_load_image("Resources/textures/toy_box_normal.png", &t_width, &t_height, 0, SOIL_LOAD_RGB);
+	image = stbi_load("Resources/textures/toy_box_normal.png", &t_width, &t_height, 0, STBI_rgb);
 #else
-	image = SOIL_load_image("Resources/textures/bricks2_normal.jpg", &t_width, &t_height, 0, SOIL_LOAD_RGB);
+	image = stbi_load("Resources/textures/bricks2_normal.jpg", &t_width, &t_height, 0, STBI_rgb);
 #endif
 	glGenTextures(1, &normalMap);
 
@@ -325,16 +325,16 @@ int main()
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, t_width, t_height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
 	glGenerateMipmap(GL_TEXTURE_2D);
 
-	SOIL_free_image_data(image);
+	stbi_image_free(image);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	// Displacement Maps
 	GLuint dispMap;
 #ifdef  USING_WOOD_TOYS
-	image = SOIL_load_image("Resources/textures/toy_box_disp.png", &t_width, &t_height, 0, SOIL_LOAD_RGB);
+	image = stbi_load("Resources/textures/toy_box_disp.png", &t_width, &t_height, 0, STBI_rgb);
 #else
-	image = SOIL_load_image("Resources/textures/bricks2_disp.jpg", &t_width, &t_height, 0, SOIL_LOAD_RGB);
+	image = stbi_load("Resources/textures/bricks2_disp.jpg", &t_width, &t_height, 0, STBI_rgb);
 #endif //  USING_WOOD_TOYS
 
 
@@ -351,7 +351,7 @@ int main()
 
 	glGenerateMipmap(GL_TEXTURE_2D);
 
-	SOIL_free_image_data(image);
+	stbi_image_free(image);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 
